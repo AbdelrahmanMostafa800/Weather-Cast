@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="homeBackgroundStart">#B57AF1</color>
+    <color name="homeBackgroundend">#533868</color>
+    <color name="fragment_home_yello">#AF8B3B</color>
+    <color name="recycleview_background">#9d71be</color>
+</resources>

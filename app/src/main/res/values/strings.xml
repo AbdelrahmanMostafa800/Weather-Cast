@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Weather Cast</string>
+    <string name="weather_location">Alexandria/Egypt</string>
+    <string name="weather_condition">Mostly Cloudy</string>
+    <string name="degreeo">o</string>
+    <string name="today">Today</string>
+    <string name="next_five_days">Next 5 days</string>
+</resources>
