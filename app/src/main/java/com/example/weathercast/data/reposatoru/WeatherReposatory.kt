@@ -1,8 +1,6 @@
-package com.example.weathercast.data
+package com.example.weathercast.data.reposatoru
 
-import android.app.Application
-
-class WeatherReposatory :WeatherReposatoryInterface{
+class WeatherReposatory : WeatherReposatoryInterface {
 
     companion object {
         private var instance: WeatherReposatory? = null
