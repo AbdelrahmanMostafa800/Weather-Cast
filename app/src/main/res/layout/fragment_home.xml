@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/home_background_linear_gradiant_color"
-    tools:context=".homeweather.HomeFragment">
+    tools:context=".homeweather.view.HomeFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -71,7 +71,7 @@
             android:textSize="70sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.427"
+            app:layout_constraintHorizontal_bias="0.451"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/weather_state" />
 
