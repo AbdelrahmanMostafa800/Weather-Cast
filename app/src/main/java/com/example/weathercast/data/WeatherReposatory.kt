@@ -1,4 +1,4 @@
 package com.example.weathercast.data
 
-class WeatherReposatory {
+class WeatherReposatory :WeatherReposatoryInterface{
 }
