@@ -7,17 +7,22 @@
 
     <fragment
         android:id="@+id/homeFragment"
-        android:name="com.example.weathercast.HomeFragment"
+        android:name="com.example.weathercast.homeweather.HomeFragment"
         android:label="fragment_home"
         tools:layout="@layout/fragment_home" />
     <fragment
         android:id="@+id/profileFragment"
-        android:name="com.example.weathercast.ProfileFragment"
+        android:name="com.example.weathercast.favorits.FavoritsFragment"
         android:label="fragment_profile"
         tools:layout="@layout/fragment_profile" />
     <fragment
         android:id="@+id/settingsFragment"
-        android:name="com.example.weathercast.SettingsFragment"
+        android:name="com.example.weathercast.setting.SettingsFragment"
         android:label="fragment_settings"
         tools:layout="@layout/fragment_settings" />
+    <fragment
+        android:id="@+id/alarmAndNotificationFragment"
+        android:name="com.example.weathercast.alarmandnotification.AlarmAndNotificationFragment"
+        android:label="fragment_alarm_and_notification"
+        tools:layout="@layout/fragment_alarm_and_notification" />
 </navigation>

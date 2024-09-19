@@ -1,17 +1,14 @@
-package com.example.weathercast
+package com.example.weathercast.homeweather
 
 import android.os.Bundle
-import android.view.Menu
 import android.view.MenuItem
-import android.widget.Button
-import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.Navigation.findNavController
-import androidx.navigation.ui.NavigationUI.setupActionBarWithNavController
 import androidx.navigation.ui.NavigationUI.setupWithNavController
+import com.example.weathercast.R
 import com.google.android.material.navigation.NavigationView
 
 class MainActivity : AppCompatActivity() {

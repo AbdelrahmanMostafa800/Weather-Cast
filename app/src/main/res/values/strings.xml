@@ -5,4 +5,6 @@
     <string name="degreeo">o</string>
     <string name="today">Today</string>
     <string name="next_five_days">Next 5 days</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
