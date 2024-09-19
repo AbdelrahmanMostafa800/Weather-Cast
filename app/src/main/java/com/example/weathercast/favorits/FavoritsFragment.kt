@@ -6,10 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.RecyclerView
 import com.example.weathercast.R
-import com.example.weathercast.data.WeatherReposatory
-import com.example.weathercast.data.WeatherReposatoryInterface
+import com.example.weathercast.data.reposatoru.WeatherReposatory
+import com.example.weathercast.data.reposatoru.WeatherReposatoryInterface
 import com.example.weathercast.homeweather.viewmodel.HomeViewModel
 import com.example.weathercast.homeweather.viewmodel.HomeViewModelFactory
 

@@ -2,7 +2,7 @@ package com.example.weathercast.homeweather.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.example.weathercast.data.WeatherReposatoryInterface
+import com.example.weathercast.data.reposatoru.WeatherReposatoryInterface
 
 class HomeViewModel(private val weatherReposatory: WeatherReposatoryInterface): ViewModel() {
 }
