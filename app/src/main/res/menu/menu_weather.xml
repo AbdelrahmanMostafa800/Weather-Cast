@@ -3,14 +3,18 @@
 
     <item
         android:id="@+id/homeFragment"
-        android:title="Home" />
+        android:icon="@drawable/home_icon"
+        android:title="@string/home" />
     <item
         android:id="@+id/favoritFragment"
-        android:title="Favorits" />
+        android:icon="@drawable/favorite"
+        android:title="@string/favorits" />
     <item
         android:id="@+id/alarmAndNotificationFragment"
-        android:title="Alerts &amp; Notifications" />
+        android:icon="@drawable/notifications"
+        android:title="@string/alarm_and_notification" />
     <item
         android:id="@+id/settingsFragment"
-        android:title="Settings" />
+        android:icon="@drawable/settings"
+        android:title="@string/settings" />
 </menu>

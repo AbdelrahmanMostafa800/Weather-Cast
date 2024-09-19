@@ -5,4 +5,8 @@
     <string name="degreeo">o</string>
     <string name="today">Today</string>
     <string name="next_five_days">Next 5 days</string>
+    <string name="home">Home</string>
+    <string name="favorits">Favorits</string>
+    <string name="alarm_and_notification"><![CDATA[Alerts &amp; Notifications]]></string>
+    <string name="settings">Settings</string>
 </resources>
