@@ -13,8 +13,7 @@ import com.example.weathercast.homeweather.viewmodel.HomeViewModel
 import com.example.weathercast.homeweather.viewmodel.HomeViewModelFactory
 
 class FavoritsFragment : Fragment() {
-    lateinit var homeViewModel: HomeViewModel
-    private lateinit var weatherReposatory: WeatherReposatoryInterface
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,15 +27,5 @@ class FavoritsFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_favorit, container, false)
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        weatherReposatory = WeatherReposatory.getInstance()!!
-        val viewModelFactory = HomeViewModelFactory(weatherReposatory)
-        homeViewModel = ViewModelProvider(this, viewModelFactory).get(HomeViewModel::class.java)
-        /*homeViewModel.products.observe(this, Observer { products ->
-            adapter.submitList(products)
-            recyclerView.adapter = adapter
-        })
-        homeViewModel.getAllProducts()*/
-    }
+
 }
