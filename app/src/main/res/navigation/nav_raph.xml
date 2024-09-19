@@ -11,10 +11,10 @@
         android:label="fragment_home"
         tools:layout="@layout/fragment_home" />
     <fragment
-        android:id="@+id/profileFragment"
+        android:id="@+id/favoritFragment"
         android:name="com.example.weathercast.favorits.FavoritsFragment"
         android:label="fragment_profile"
-        tools:layout="@layout/fragment_profile" />
+        tools:layout="@layout/fragment_favorit" />
     <fragment
         android:id="@+id/settingsFragment"
         android:name="com.example.weathercast.setting.SettingsFragment"
