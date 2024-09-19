@@ -5,9 +5,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.RecyclerView
 import com.example.weathercast.R
+import com.example.weathercast.data.WeatherReposatory
+import com.example.weathercast.data.WeatherReposatoryInterface
+import com.example.weathercast.homeweather.viewmodel.HomeViewModel
+import com.example.weathercast.homeweather.viewmodel.HomeViewModelFactory
 
 class FavoritsFragment : Fragment() {
+    lateinit var homeViewModel: HomeViewModel
+    private lateinit var weatherReposatory: WeatherReposatoryInterface
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
@@ -18,5 +27,17 @@ class FavoritsFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_favorit, container, false)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        weatherReposatory = WeatherReposatory.getInstance()!!
+        val viewModelFactory = HomeViewModelFactory(weatherReposatory)
+        homeViewModel = ViewModelProvider(this, viewModelFactory).get(HomeViewModel::class.java)
+        /*homeViewModel.products.observe(this, Observer { products ->
+            adapter.submitList(products)
+            recyclerView.adapter = adapter
+        })
+        homeViewModel.getAllProducts()*/
     }
 }
