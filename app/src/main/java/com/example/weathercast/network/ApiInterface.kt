@@ -14,6 +14,7 @@ interface ApiInterface {
         @Query("units") units: String = "metric",
         @Query("appid") appId: String
     ): ForcastWeatherData
+    @GET("data/2.5/weather")
     suspend fun getCurrentWeathertData(
         @Query("lat") lat: String,
         @Query("lon") lon: String,
