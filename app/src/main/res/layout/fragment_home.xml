@@ -36,7 +36,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="29dp"
                 android:layout_marginTop="7dp"
-                android:text="@string/weather_location"
+                android:text='@{String.format("%s // %s", HFVModel.currenWeatherData.name, HFVModel.currenWeatherData.sys.country)}'
                 android:textColor="@color/white"
                 android:textSize="20sp"
                 android:textStyle="bold"
@@ -50,7 +50,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="28dp"
-                android:text="@{WeatherData.list.get(0).weather.get(0).description}"
+                android:text="@{HFVModel.currenWeatherData.weather.get(0).description}"
                 android:textColor="@color/white"
                 android:textSize="20sp"
                 android:textStyle="bold"
@@ -64,17 +64,18 @@
                 android:layout_width="129dp"
                 android:layout_height="103dp"
                 android:layout_marginTop="12dp"
-                android:src="@drawable/weatherstate"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView2" />
+                app:layout_constraintTop_toBottomOf="@+id/textView2"
+                app:error="@{@android:drawable/ic_dialog_alert}"
+                app:imageIcon="@{HFVModel.currenWeatherData.weather.get(0).icon}"/>
 
             <TextView
                 android:id="@+id/weather_degree"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
-                android:text="@{}"
+                android:text="@{String.valueOf(Math.round(HFVModel.currenWeatherData.main.temp))}"
                 android:textColor="@color/white"
                 android:textSize="70sp"
                 android:textStyle="bold"
@@ -102,7 +103,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="2dp"
                 android:layout_marginTop="2dp"
-                android:text="F"
+                android:text="C"
                 android:textColor="@color/white"
                 android:textSize="34sp"
                 app:layout_constraintStart_toEndOf="@+id/odegree"
