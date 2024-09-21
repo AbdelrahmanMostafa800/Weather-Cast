@@ -16,7 +16,7 @@ import java.util.Date
 
 
 class NextFiveDayWeatherDiffUtillAdapter: ListAdapter<WeatherData, NextFiveDayWeatherDiffUtillAdapter.ViewHolder> (
-    FiveDaysWeatherDiffUtillClass()
+    TodaWeatherDiffUtillClass()
 ){
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val listRowBinding:NextFiveDaysRecycleviewItemBinding=
