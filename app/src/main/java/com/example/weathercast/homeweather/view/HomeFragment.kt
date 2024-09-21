@@ -30,8 +30,10 @@ class HomeFragment : Fragment() {
     lateinit var homeViewModel: HomeViewModel
     lateinit var binding: FragmentHomeBinding
     private lateinit var weatherReposatory: WeatherReposatoryInterface
-    lateinit var adapter: TodayWeatherDiffUtillAdapter
-    private lateinit var recyclersView: RecyclerView
+    lateinit var todayAdapter: TodayWeatherDiffUtillAdapter
+    private lateinit var todaRecyclersView: RecyclerView
+    lateinit var fiveDaysAdapter: NextFiveDayWeatherDiffUtillAdapter
+    private lateinit var fiveDaysRecyclersView: RecyclerView
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -42,9 +44,14 @@ class HomeFragment : Fragment() {
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        recyclersView = view.findViewById(R.id.today_weather_recyclerView)
-        recyclersView.layoutManager = LinearLayoutManager(context,LinearLayoutManager.HORIZONTAL,false)
-        adapter = TodayWeatherDiffUtillAdapter()
+        todaRecyclersView = view.findViewById(R.id.today_weather_recyclerView)
+        todaRecyclersView.layoutManager = LinearLayoutManager(context,LinearLayoutManager.HORIZONTAL,false)
+        todayAdapter = TodayWeatherDiffUtillAdapter()
+
+
+        fiveDaysRecyclersView = view.findViewById(R.id.next_days_weather_recycler_view)
+        fiveDaysRecyclersView.layoutManager = LinearLayoutManager(context)
+        fiveDaysAdapter = NextFiveDayWeatherDiffUtillAdapter()
 
         weatherReposatory = WeatherReposatory.getInstance()!!
         val viewModelFactory = HomeViewModelFactory(weatherReposatory)
@@ -59,8 +66,34 @@ class HomeFragment : Fragment() {
         binding.currentdate=currentDateAndTime
 
         homeViewModel.forcastWeatherData.observe(viewLifecycleOwner, Observer { weatherData ->
-            adapter.submitList(weatherData.list.filter { it.dtTxt?.contains(SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())) == true })
-            recyclersView.adapter = adapter
+            todayAdapter.submitList(weatherData.list.filter {
+                it.dtTxt?.contains(
+                    SimpleDateFormat(
+                        "yyyy-MM-dd",
+                        Locale.getDefault()
+                    ).format(Date())
+                ) == true
+            })
+            todaRecyclersView.adapter = todayAdapter
+            fiveDaysAdapter.submitList(weatherData.list
+                .filter {
+                it.dtTxt?.contains(
+                    SimpleDateFormat(
+                        "yyyy-MM-dd",
+                        Locale.getDefault()
+                    ).format(Date())
+                ) == false
+            }
+                .filter {
+                    it.dtTxt?.contains(
+                        SimpleDateFormat(
+                            "00:00:00",
+                            Locale.getDefault()
+                        ).format(Date())
+                    ) == true
+                }
+            )
+            fiveDaysRecyclersView.adapter = fiveDaysAdapter
         })
     }
 
