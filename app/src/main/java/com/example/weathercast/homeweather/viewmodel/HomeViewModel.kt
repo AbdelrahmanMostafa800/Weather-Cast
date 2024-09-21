@@ -26,7 +26,13 @@ class HomeViewModel(private val weatherReposatory: WeatherReposatoryInterface): 
 
         }
     }
+    fun getCurrentData(latitude: String, longitude: String, measurementUnit: String) {
+        Log.d("TAG", "getForecastData: viewmodel")
+        viewModelScope.launch(Dispatchers.IO) {
+            _currenWeatherData.postValue(weatherReposatory.getCurrentData(latitude, longitude,measurementUnit))
 
+        }
+    }
 }
 
 
