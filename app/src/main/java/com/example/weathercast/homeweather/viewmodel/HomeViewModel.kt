@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.example.weathercast.data.pojo.CurrentWeatherData
 import com.example.weathercast.data.pojo.ForcastWeatherData
 import com.example.weathercast.data.reposatoru.WeatherReposatoryInterface
 import kotlinx.coroutines.Dispatchers
@@ -15,8 +16,8 @@ class HomeViewModel(private val weatherReposatory: WeatherReposatoryInterface): 
     private var _forcastWeatherData = MutableLiveData<ForcastWeatherData>()
     val forcastWeatherData: LiveData<ForcastWeatherData> = _forcastWeatherData
 
-    private var _currenWeatherData = MutableLiveData<ForcastWeatherData>()
-    val currenWeatherData: LiveData<ForcastWeatherData> = _currenWeatherData
+    private var _currenWeatherData = MutableLiveData<CurrentWeatherData>()
+    val currenWeatherData: LiveData<CurrentWeatherData> = _currenWeatherData
 
     fun getForecastData(latitude: String, longitude: String, measurementUnit: String) {
         Log.d("TAG", "getForecastData: viewmodel")
@@ -25,6 +26,7 @@ class HomeViewModel(private val weatherReposatory: WeatherReposatoryInterface): 
 
         }
     }
+
 }
 
 
