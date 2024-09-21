@@ -15,6 +15,9 @@ class HomeViewModel(private val weatherReposatory: WeatherReposatoryInterface): 
     private var _forcastWeatherData = MutableLiveData<ForcastWeatherData>()
     val forcastWeatherData: LiveData<ForcastWeatherData> = _forcastWeatherData
 
+    private var _currenWeatherData = MutableLiveData<ForcastWeatherData>()
+    val currenWeatherData: LiveData<ForcastWeatherData> = _currenWeatherData
+
     fun getForecastData(latitude: String, longitude: String, measurementUnit: String) {
         Log.d("TAG", "getForecastData: viewmodel")
         viewModelScope.launch(Dispatchers.IO) {
