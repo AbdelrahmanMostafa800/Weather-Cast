@@ -21,14 +21,12 @@ class HomeViewModel(private val weatherReposatory: WeatherReposatoryInterface): 
 
     fun getForecastData(latitude: String, longitude: String, measurementUnit: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            Log.d("TAG", "getForecastData1: viewmodel${weatherReposatory.getForecastData(latitude, longitude,measurementUnit)}")
             _forcastWeatherData.postValue(weatherReposatory.getForecastData(latitude, longitude,measurementUnit))
 
         }
     }
     fun getCurrentData(latitude: String, longitude: String, measurementUnit: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            Log.d("TAG", "getForecastData1: viewmodel${weatherReposatory.getCurrentData(latitude, longitude,measurementUnit)}")
             _currenWeatherData.postValue(weatherReposatory.getCurrentData(latitude, longitude,measurementUnit))
 
         }
