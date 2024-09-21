@@ -1,4 +1,3 @@
-/*
 package com.example.weathercast.homeweather.view
 
 import android.icu.text.SimpleDateFormat
@@ -31,15 +30,14 @@ class TodayWeatherDiffUtillAdapter: ListAdapter<WeatherData, TodayWeatherDiffUti
     class ViewHolder(var listRowBinding: TodayRecycleRecycleviewItemBinding) : RecyclerView.ViewHolder(listRowBinding.root)
 }
 
-@BindingAdapter("android:text")
-fun setTime(view: TextView, dt_txt: String?) {
+@BindingAdapter("recycletext")
+fun setTime(view: TextView, recycletext: String?) {
     val sdf: SimpleDateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
     try {
-        val date: Date = sdf.parse(dt_txt)
+        val date: Date = sdf.parse(recycletext)
         sdf.applyPattern("h a")
         view.text = sdf.format(date)
     } catch (e:Exception) {
         view.text = ""
     }
 }
-*/
