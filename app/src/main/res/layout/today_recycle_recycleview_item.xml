@@ -1,34 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:padding="10dp"
-    android:orientation="vertical">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <TextView
-        android:id="@+id/time"
+    <data>
+        <variable
+            name="todayweatherData"
+            type="com.example.weathercast.data.pojo.WeatherData" />
+    </data>
+
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:textSize="15sp"
-        android:textColor="@color/white"
-        android:text="7 Am" />
+        android:padding="10dp"
 
-    <ImageView
-        android:id="@+id/imageView3"
-        android:layout_gravity="center"
-        android:layout_marginVertical="10dp"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        app:srcCompat="@drawable/cloud2" />
+        android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/weather_condition"
-        android:layout_width="wrap_content"
-        android:textColor="@color/white"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:textSize="15sp"
-        android:text="Mostly Cloudy" />
-</LinearLayout>
+        <TextView
+            android:id="@+id/time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textSize="15sp"
+            android:textColor="@color/white"
+            android:text="@{todayweatherData.dtTxt}"
+            />
+
+        <ImageView
+            android:id="@+id/imageView3"
+            android:layout_gravity="center"
+            android:layout_marginVertical="10dp"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            app:error="@{@android:drawable/ic_dialog_alert}"
+            app:imageIcon="@{todayweatherData.weather.get(0).icon}"/>
+
+
+        <TextView
+            android:id="@+id/weather_condition"
+            android:layout_width="wrap_content"
+            android:textColor="@color/white"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textSize="15sp"
+            android:text="@{todayweatherData.weather.get(0).description}" />
+    </LinearLayout>
+</layout>
