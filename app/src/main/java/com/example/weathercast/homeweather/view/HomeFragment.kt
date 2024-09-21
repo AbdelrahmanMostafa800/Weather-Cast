@@ -35,6 +35,7 @@ class HomeFragment : Fragment() {
         val viewModelFactory = HomeViewModelFactory(weatherReposatory)
         homeViewModel = ViewModelProvider(this, viewModelFactory).get(HomeViewModel::class.java)
         homeViewModel.getForecastData("30.0444","31.2357","metric")
+        homeViewModel.getCurrentData("30.0444","31.2357","metric")
         binding.hfvModel=homeViewModel
     }
 }
