@@ -2,6 +2,7 @@ package com.example.weathercast.homeweather.view
 
 import android.graphics.drawable.Drawable
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,7 +11,10 @@ import android.widget.TextView
 import androidx.databinding.BindingAdapter
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.weathercast.R
 import com.example.weathercast.data.reposatoru.WeatherReposatory
 import com.example.weathercast.data.reposatoru.WeatherReposatoryInterface
@@ -26,9 +30,8 @@ class HomeFragment : Fragment() {
     lateinit var homeViewModel: HomeViewModel
     lateinit var binding: FragmentHomeBinding
     private lateinit var weatherReposatory: WeatherReposatoryInterface
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
+    lateinit var adapter: TodayWeatherDiffUtillAdapter
+    private lateinit var recyclersView: RecyclerView
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -39,6 +42,10 @@ class HomeFragment : Fragment() {
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        recyclersView = view.findViewById(R.id.today_weather_recyclerView)
+        recyclersView.layoutManager = LinearLayoutManager(context,LinearLayoutManager.HORIZONTAL,false)
+        adapter = TodayWeatherDiffUtillAdapter()
+
         weatherReposatory = WeatherReposatory.getInstance()!!
         val viewModelFactory = HomeViewModelFactory(weatherReposatory)
         homeViewModel = ViewModelProvider(this, viewModelFactory).get(HomeViewModel::class.java)
@@ -47,9 +54,14 @@ class HomeFragment : Fragment() {
         homeViewModel.getForecastData("30.0444","31.2357","metric")
         homeViewModel.getCurrentData("30.0444","31.2357","metric")
 
-        val dateFormat = SimpleDateFormat("EEE, dd MMMM, h:mm a", Locale.getDefault())
+        val dateFormat = SimpleDateFormat("EEE, dd MMMM  h:mm a", Locale.getDefault())
         val currentDateAndTime: String = dateFormat.format(Date())
         binding.currentdate=currentDateAndTime
+
+        homeViewModel.forcastWeatherData.observe(viewLifecycleOwner, Observer { weatherData ->
+            adapter.submitList(weatherData.list.filter { it.dtTxt?.contains(SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())) == true })
+            recyclersView.adapter = adapter
+        })
     }
 
 
