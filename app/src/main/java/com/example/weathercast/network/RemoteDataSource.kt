@@ -1,6 +1,6 @@
 package com.example.mvvm.network
 
-import android.util.Log
+
 import com.example.lab1.retrofitapi.ApiInterface
 import com.example.lab1.retrofitapi.RetrofitClient
 import com.example.weathercast.data.pojo.CurrentWeatherData
