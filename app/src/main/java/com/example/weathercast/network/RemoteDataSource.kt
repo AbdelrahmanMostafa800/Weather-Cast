@@ -16,7 +16,6 @@ class RemoteDataSource() : RemoteDataSourceInterface {
     ): ForcastWeatherData {
         try {
             val response = apiService.getForecastData(latitude, longitude,measurementUnit,appId="ed06dd80726ae839deb870c92c41bb01")
-            Log.d("TAG", "getForecastData: ${response}")
             return response
         }catch (e:Exception){
             throw e
@@ -29,7 +28,6 @@ class RemoteDataSource() : RemoteDataSourceInterface {
     ): CurrentWeatherData {
         try {
             val response = apiService.getCurrentWeathertData(latitude, longitude,measurementUnit,appId="ed06dd80726ae839deb870c92c41bb01")
-            Log.d("TAG", "getForecastData: ${response}")
             return response
         }catch (e:Exception){
             throw e
