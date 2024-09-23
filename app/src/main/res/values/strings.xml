@@ -10,4 +10,6 @@
     <string name="alarm_and_notification"><![CDATA[Alerts &amp; Notifications]]></string>
     <string name="settings">Settings</string>
     <string name="deg">\t°</string>
+    <string name="splash_text">Please enable location permission to get weather status </string>
+    <string name="splash_fromhere"><u>Enable</u></string>
 </resources>
