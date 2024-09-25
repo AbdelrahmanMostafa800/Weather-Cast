@@ -10,20 +10,25 @@ import com.example.weathercast.data.pojo.CurrentWeatherData
 import com.example.weathercast.data.pojo.ForcastWeatherData
 import com.example.weathercast.data.reposatoru.WeatherReposatoryInterface
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 
 class HomeViewModel(private val weatherReposatory: WeatherReposatoryInterface): ViewModel() {
-    private var _forcastWeatherData = MutableLiveData<ForcastWeatherData>()
-    val forcastWeatherData: LiveData<ForcastWeatherData> = _forcastWeatherData
+    private var _forcastWeatherData = MutableLiveData<AppiState>()
+    val forcastWeatherData: LiveData<AppiState> = _forcastWeatherData
 
     private var _currenWeatherData = MutableLiveData<CurrentWeatherData>()
     val currenWeatherData: LiveData<CurrentWeatherData> = _currenWeatherData
 
-    fun getForecastData(latitude: String, longitude: String, measurementUnit: String) {
-        viewModelScope.launch(Dispatchers.IO) {
-            _forcastWeatherData.postValue(weatherReposatory.getForecastData(latitude, longitude,measurementUnit))
-
-        }
+    fun getForecastData(latitude: String, longitude: String, measurementUnit: String)= viewModelScope.launch(Dispatchers.IO) {
+        _forcastWeatherData.postValue(AppiState.Loading)
+        weatherReposatory.getForecastData(latitude, longitude,measurementUnit)
+            .catch {
+                _forcastWeatherData.postValue(AppiState.Failure(it.message.toString())) // post failure state
+            }
+            .collect {
+                _forcastWeatherData.postValue(AppiState.Success(it)) // post success state
+            }
     }
     fun getCurrentData(latitude: String, longitude: String, measurementUnit: String) {
         viewModelScope.launch(Dispatchers.IO) {
