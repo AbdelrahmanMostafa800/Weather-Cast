@@ -4,6 +4,7 @@ import com.example.mvvm.network.RemoteDataSource
 import com.example.mvvm.network.RemoteDataSourceInterface
 import com.example.weathercast.data.pojo.CurrentWeatherData
 import com.example.weathercast.data.pojo.ForcastWeatherData
+import kotlinx.coroutines.flow.Flow
 
 class WeatherReposatory(
     private val weatherRemoteDataSource: RemoteDataSourceInterface
@@ -26,7 +27,7 @@ class WeatherReposatory(
         latitude: String,
         longitude: String,
         measurementUnit: String
-    ): ForcastWeatherData {
+    ): Flow<ForcastWeatherData> {
        return weatherRemoteDataSource.getForecastData(latitude, longitude,measurementUnit)
     }
     override suspend fun getCurrentData(
