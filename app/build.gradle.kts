@@ -40,7 +40,13 @@ android {
 }
 
 dependencies {
+    //Coroutine
+    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
+    //viewmodel
     implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1")
+    implementation ("androidx.lifecycle:lifecycle-extensions:2.2.0")
+    //livedata
+    implementation ("androidx.lifecycle:lifecycle-livedata-ktx:2.8.6")
     //swip fresh
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.2.0-alpha01")
     //SafeArgs
