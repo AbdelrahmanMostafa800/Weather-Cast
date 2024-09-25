@@ -13,7 +13,9 @@
 
         <action
             android:id="@+id/action_homeFragment_to_splashFragment2"
-            app:destination="@id/splashFragment" />
+            app:destination="@id/splashFragment"
+            app:popUpTo="@id/homeFragment"
+            app:popUpToInclusive="true" />
     </fragment>
 
     <fragment
@@ -39,6 +41,8 @@
 
         <action
             android:id="@+id/action_splashFragment_to_homeFragment2"
-            app:destination="@id/homeFragment" />
+            app:destination="@id/homeFragment"
+            app:popUpTo="@id/splashFragment"
+            app:popUpToInclusive="true" />
     </fragment>
 </navigation>
