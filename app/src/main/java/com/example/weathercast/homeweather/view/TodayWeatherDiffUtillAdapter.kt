@@ -12,6 +12,7 @@ import com.example.weathercast.R
 import com.example.weathercast.data.pojo.WeatherData
 import com.example.weathercast.databinding.TodayRecycleRecycleviewItemBinding
 import java.util.Date
+import java.util.Locale
 
 
 class TodayWeatherDiffUtillAdapter: ListAdapter<WeatherData, TodayWeatherDiffUtillAdapter.ViewHolder> (
@@ -29,15 +30,20 @@ class TodayWeatherDiffUtillAdapter: ListAdapter<WeatherData, TodayWeatherDiffUti
     }
     class ViewHolder(var listRowBinding: TodayRecycleRecycleviewItemBinding) : RecyclerView.ViewHolder(listRowBinding.root)
 }
-
 @BindingAdapter("recycletext")
 fun setTime(view: TextView, recycletext: String?) {
-    val sdf: SimpleDateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
-    try {
-        val date: Date = sdf.parse(recycletext)
-        sdf.applyPattern("h a")
-        view.text = sdf.format(date)
-    } catch (e:Exception) {
-        view.text = ""
+    if (recycletext != null) {
+        val locale = Locale.getDefault()  // Get the current locale
+        val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", locale)  // Use locale-aware date parsing
+        try {
+            val date: Date = sdf.parse(recycletext)
+            val outputSdf = SimpleDateFormat("h a", locale)  // Locale-aware time formatting
+            view.text = outputSdf.format(date)
+        } catch (e: Exception) {
+            view.text = "N/A"
+        }
+    } else {
+        view.text = "N/A"
     }
 }
+
