@@ -20,6 +20,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.Navigation.findNavController
 import androidx.navigation.ui.NavigationUI.setupWithNavController
+import com.example.weathercast.MapActivity
 import com.example.weathercast.R
 import com.example.weathercast.SplashFragment
 import com.google.android.material.navigation.NavigationView
@@ -58,7 +59,11 @@ class MainActivity : AppCompatActivity() {
         if (checkPermission()) {
             Log.d("TAG", "Activity onCreate:checkPermission start")
             if (aCCESS_FINE_LOCATION){
-
+                val intent=Intent(this,MapActivity::class.java)
+                startActivity(intent)
+               /* if (currentDestination.id == R.id.splashFragment) {
+                    findNavController(this, R.id.nav_host_fragment).navigate(R.id.action_splashFragment_to_mapFragment)
+                }*/
             }else if (aCCESS_COARSE_LOCATION){
                 homeMenuItem.setVisible(true)
                 splashMenuItem.setVisible(false)
@@ -118,6 +123,11 @@ class MainActivity : AppCompatActivity() {
                     // Now you can check the permission variables
                     if (aCCESS_FINE_LOCATION){
                         Log.d("TAG", "onRequestPermissionsResult: aCCESS_FINE_LOCATION")
+                        val intent=Intent(this,MapActivity::class.java)
+                        startActivity(intent)
+                        /*if (currentDestination.id == R.id.splashFragment) {
+                            findNavController(this, R.id.nav_host_fragment).navigate(R.id.action_splashFragment_to_mapFragment)
+                        }*/
 
                     }else if (aCCESS_COARSE_LOCATION){
                         Log.d("TAG", "onRequestPermissionsResult: aCCESS_COARSE_LOCATION")
