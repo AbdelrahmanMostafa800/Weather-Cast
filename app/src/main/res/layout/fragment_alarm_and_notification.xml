@@ -1,13 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".alarmandnotification.AlarmAndNotificationFragment">
+    tools:context=".favorits.FavoritsFragment">
 
-    <TextView
+
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/addButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:src="@drawable/sharp_add_black_36"
+        android:layout_gravity="bottom|end"
+        android:layout_marginBottom="70dp"
+        android:layout_marginEnd="35dp"
+        />
+
+    <androidx.recyclerview.widget.RecyclerView
+
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="favorits" />
+        android:id="@+id/favorits_recycler_view"
+        android:layout_gravity="center"
+        >
+
+    </androidx.recyclerview.widget.RecyclerView>
 
 </FrameLayout>
