@@ -5,27 +5,37 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/home_background_linear_gradiant_color"
-    tools:context=".homeweather.view.MainActivity">
+    tools:context=".homeweather.view.MainActivity"
+    android:background="@color/white"
+    >
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        >
 
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="356dp"
-            android:layout_height="?attr/actionBarSize"
-            android:layout_gravity="center_horizontal"
-            app:contentInsetEnd="0dp"
-            app:contentInsetStart="0dp"
-            app:layout_collapseMode="pin"
-            app:navigationIcon="@drawable/menu"
-            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-            app:title="Home"
-            app:titleMarginStart="88dp"
-            app:titleTextColor="@android:color/white" />
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/homeBackgroundStart"
+
+            >
+
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="356dp"
+
+                android:layout_height="?attr/actionBarSize"
+                android:layout_gravity="center_horizontal"
+                app:contentInsetEnd="0dp"
+                app:contentInsetStart="0dp"
+                app:layout_collapseMode="pin"
+                app:navigationIcon="@drawable/menu"
+                app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+                app:titleMarginStart="88dp"
+                app:titleTextColor="@android:color/white" />
+        </FrameLayout>
 
         <fragment
             android:id="@+id/nav_host_fragment"
