@@ -1,13 +1,26 @@
-package com.example.weathercast
+package com.example.weathercast.map.view
 
+import android.content.Intent
 import android.graphics.Rect
 import android.location.Geocoder
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
+import com.example.mvvm.db.LocationLocalDataSource
+import com.example.mvvm.network.RemoteDataSource
+import com.example.weathercast.viemodel.SharedPreferenceViewModel
+import com.example.weathercast.viemodel.SharedPreferenceViewModelFactory
+import com.example.weathercast.data.localdatasource.SharedPreferencelLocationData
+import com.example.weathercast.data.localdatasource.WeatherLocalDataSource
+import com.example.weathercast.data.pojo.Location
+import com.example.weathercast.data.reposatoru.WeatherReposatory
 import com.example.weathercast.databinding.ActivityMapBinding
+import com.example.weathercast.homeweather.view.MainActivity
+import com.example.weathercast.viemodel.DbViewModel
+import com.example.weathercast.viemodel.DbViewModelFactory
+import com.example.weathercast.viemodel.ToolBarTextViewModel
 import org.osmdroid.config.Configuration
 import org.osmdroid.events.MapEventsReceiver
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
@@ -17,13 +30,21 @@ import org.osmdroid.views.overlay.Marker
 import java.util.*
 
 class MapActivity : AppCompatActivity() {
-
+    lateinit var dbViewModel: DbViewModel
     private lateinit var binding: ActivityMapBinding
+    lateinit var sharedPreferenceViewModel: SharedPreferenceViewModel
     private lateinit var geocoder: Geocoder
     private var previousMarker: Marker? = null
+    var long: Double? =null
+    var lat:Double?=null
+    var isFavoritsFragment=false
+    var address=""
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        isFavoritsFragment=intent.getBooleanExtra("isFromFavorits",false)
         // Load the user agent to prevent throttling
         Configuration.getInstance().load(this, android.preference.PreferenceManager.getDefaultSharedPreferences(this))
 
@@ -34,6 +55,16 @@ class MapActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         setupMap()
+        val remoteDataSource = RemoteDataSource()
+        val localRepository = WeatherLocalDataSource(SharedPreferencelLocationData.getInstance(this),
+            LocationLocalDataSource.getInstance(this))
+        val weatherReposatory = WeatherReposatory.getInstance(remoteDataSource, localRepository)
+        val sharedViewModelFactory = SharedPreferenceViewModelFactory(weatherReposatory)
+         sharedPreferenceViewModel =
+            ViewModelProvider(this, sharedViewModelFactory).get(SharedPreferenceViewModel::class.java)
+        val dBViewModelFactory = DbViewModelFactory(weatherReposatory)
+        dbViewModel =
+            ViewModelProvider(this, dBViewModelFactory).get(DbViewModel::class.java)
     }
 
     private fun setupMap() {
@@ -53,10 +84,14 @@ class MapActivity : AppCompatActivity() {
             val mapEventReceiver = object : MapEventsReceiver {
                 override fun singleTapConfirmedHelper(p: GeoPoint?): Boolean {
                     p?.let {
-                        binding.choose.visibility = View.VISIBLE
-                        val lat = it.latitude
-                        val long = it.longitude
+                         lat = it.latitude
+                         long = it.longitude
                         Log.d("TAG", "singleTapConfirmedHelper:${lat}/${long} ")
+                        // Get the address from the coordinates
+                        val addresses = geocoder.getFromLocation(lat!!, long!!, 1)
+                         address = if (addresses?.isNotEmpty() == true) addresses.get(0)?.getAddressLine(0)
+                             .toString() else ""
+
 
                         // Remove the previous marker
                         previousMarker?.let { marker ->
@@ -65,15 +100,16 @@ class MapActivity : AppCompatActivity() {
 
                         // Add a new marker at the pressed location
                         val newMarker = Marker(this@apply)
-                        newMarker.position = GeoPoint(lat, long)
+                        newMarker.position = GeoPoint(lat!!, long!!)
                         overlays.add(newMarker)
 
                         // Update the previous marker reference
                         previousMarker = newMarker
 
-                        controller.setCenter(GeoPoint(lat, long))
+                        controller.setCenter(GeoPoint(lat!!, long!!))
                         invalidate()
                     }
+                    binding.choose.visibility = View.VISIBLE
                     return true
                 }
 
@@ -83,6 +119,20 @@ class MapActivity : AppCompatActivity() {
             }
             val mapEventsOverlay=MapEventsOverlay(mapEventReceiver)
             overlays.add(mapEventsOverlay)
+        }
+        binding.choose.setOnClickListener {
+            if (lat != null && long != null) {
+                if (isFavoritsFragment){
+
+                    val location = Location(address = address, latitude = lat!!, longitude = long!!)
+                    dbViewModel.insertLocation(location)
+                }else{
+                    sharedPreferenceViewModel.saveLocation(lat!!, long!!)
+                    val intent = Intent(this, MainActivity::class.java)
+                    startActivity(intent)
+                }
+                finish()
+            }
         }
     }
 
