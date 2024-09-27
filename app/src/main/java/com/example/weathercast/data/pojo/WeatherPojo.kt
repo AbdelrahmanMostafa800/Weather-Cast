@@ -1,7 +1,16 @@
 package com.example.weathercast.data.pojo
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 
+@Entity(tableName = "favoritplaces")
+data class Location(
+    @PrimaryKey
+    var address: String,
+    var latitude: Double,
+    var longitude: Double
+)
 data class ForcastWeatherData(
     @SerializedName("cod") val cod: String?,
     @SerializedName("message") val message: Int?,
@@ -45,7 +54,7 @@ data class WeatherData(
     @SerializedName("clouds") val clouds: Clouds,
     @SerializedName("wind") val wind: Wind,
     @SerializedName("visibility") val visibility: Int?,
-    @SerializedName("pop") val pop: Int?,
+    @SerializedName("pop") val pop: Double?,
     @SerializedName("sys") val sys: Sys,
     @SerializedName("dt_txt") val dtTxt: String?
 )
