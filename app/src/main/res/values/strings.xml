@@ -12,4 +12,8 @@
     <string name="deg">\t°</string>
     <string name="splash_text">Please enable location permission to get weather status </string>
     <string name="splash_fromhere"><u>Enable</u></string>
+
+    <string name="select">Choose this location</string>
+    <string name="no">No</string>
+    <string name="yes">Yes</string>
 </resources>
