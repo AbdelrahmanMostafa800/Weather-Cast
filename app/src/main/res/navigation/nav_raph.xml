@@ -10,7 +10,9 @@
         android:name="com.example.weathercast.homeweather.view.HomeFragment"
         android:label="fragment_home"
         tools:layout="@layout/fragment_home" >
-
+        <action
+            android:id="@+id/action_homeFragment_to_homeFragment2"
+            app:destination="@id/homeFragment" />
         <action
             android:id="@+id/action_homeFragment_to_splashFragment2"
             app:destination="@id/splashFragment"
@@ -22,7 +24,11 @@
         android:id="@+id/favoritFragment"
         android:name="com.example.weathercast.favorits.FavoritsFragment"
         android:label="fragment_profile"
-        tools:layout="@layout/fragment_favorit" />
+        tools:layout="@layout/fragment_favorit" >
+        <action
+            android:id="@+id/action_favoritFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
+    </fragment>
     <fragment
         android:id="@+id/settingsFragment"
         android:name="com.example.weathercast.setting.SettingsFragment"
