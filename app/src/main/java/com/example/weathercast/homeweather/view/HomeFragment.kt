@@ -1,15 +1,10 @@
 package com.example.weathercast.homeweather.view
 
-import android.Manifest
 import android.annotation.SuppressLint
 import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
 import android.content.IntentFilter
-import android.content.pm.PackageManager
 import android.graphics.drawable.Drawable
 import android.net.ConnectivityManager
-import android.net.NetworkInfo
 import android.os.Bundle
 import android.os.Looper
 import android.util.Log
@@ -20,12 +15,11 @@ import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity.RECEIVER_NOT_EXPORTED
-import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.databinding.BindingAdapter
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -43,7 +37,15 @@ import java.util.Date
 import java.util.Locale
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.asFlow
+import com.example.mvvm.db.LocationLocalDataSource
+import com.example.mvvm.network.RemoteDataSource
+import com.example.mvvm.network.RemoteDataSourceInterface
+import com.example.weathercast.viemodel.SharedPreferenceViewModel
+import com.example.weathercast.viemodel.SharedPreferenceViewModelFactory
+import com.example.weathercast.data.localdatasource.SharedPreferencelLocationData
+import com.example.weathercast.data.localdatasource.WeatherLocalDataSource
 import com.example.weathercast.homeweather.viewmodel.AppiState
+import com.example.weathercast.viemodel.ToolBarTextViewModel
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
@@ -52,8 +54,11 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 
 
-class HomeFragment : Fragment(),OnNetworkChange {
+class HomeFragment : Fragment(),OnNetworkChange  {
     lateinit var homeViewModel: HomeViewModel
+    lateinit var remoteDataSource: RemoteDataSourceInterface
+    lateinit var localRepository: WeatherLocalDataSource
+    var sharedPreferenceLocation=""
     lateinit var binding: FragmentHomeBinding
     private lateinit var weatherReposatory: WeatherReposatoryInterface
     lateinit var todayAdapter: TodayWeatherDiffUtillAdapter
@@ -64,6 +69,36 @@ class HomeFragment : Fragment(),OnNetworkChange {
     lateinit var progressBar: FrameLayout
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     private lateinit var networkReceiver: BroadcastReceiver
+    lateinit var sharedPreferenceViewModel: SharedPreferenceViewModel
+    private val toolBarTextViewModel: ToolBarTextViewModel by activityViewModels()
+    var latitude: Double? = null
+    var longitude: Double? = null
+    var isFromFavorits: Boolean? = false
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        Log.d("toolbar", "home frag onCreate: start")
+//        toolBarTextViewModel = ViewModelProvider(this).get(ToolBarTextViewModel::class.java)
+        /*toolBarTextViewModel.setToolbarTitle("Home")
+        Log.d("toolbar", "home frag onCreate: end Home")*/
+//        (activity as? MainActivity)?.emitToolbarTitle("New Fragment Title")
+        // Emit a new toolbar title from the ViewModel
+
+        /*if (arguments != null){
+           if( arguments?.getString("location")!=null){
+               sharedPreferenceLocation=arguments?.getString("location").toString()
+           }
+        }*/
+         remoteDataSource = RemoteDataSource()
+         localRepository = WeatherLocalDataSource(SharedPreferencelLocationData.getInstance(requireContext()),LocationLocalDataSource.getInstance(requireContext()))
+         weatherReposatory = WeatherReposatory.getInstance(remoteDataSource, localRepository)
+        val viewModelFactory = SharedPreferenceViewModelFactory(weatherReposatory)
+        sharedPreferenceViewModel =
+            ViewModelProvider(this, viewModelFactory).get(SharedPreferenceViewModel::class.java)
+        if (sharedPreferenceViewModel.getLocation()!="null,null"){
+            sharedPreferenceLocation= sharedPreferenceViewModel.getLocation().toString()
+        }
+    }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -74,6 +109,21 @@ class HomeFragment : Fragment(),OnNetworkChange {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+         latitude = arguments?.getDouble("latitude")
+         longitude = arguments?.getDouble("longitude")
+        isFromFavorits= arguments?.getBoolean("isFromFavorits")
+        Log.d("fav", "onViewCreated:${isFromFavorits},${latitude},${longitude} ")
+        if (isFromFavorits==true) {
+            viewLifecycleOwner.lifecycleScope.launch {
+                toolBarTextViewModel.setToolbarTitle("Favorites")
+            }
+        }else{
+            viewLifecycleOwner.lifecycleScope.launch {
+                toolBarTextViewModel.setToolbarTitle("Home")
+            }
+        }
+
+
         progressBar=view.findViewById(R.id.progressBar)
 
         /*receiver= MyConnectionReceiver(this)
@@ -103,7 +153,6 @@ class HomeFragment : Fragment(),OnNetworkChange {
         fiveDaysRecyclersView.layoutManager = LinearLayoutManager(context)
         fiveDaysAdapter = NextFiveDayWeatherDiffUtillAdapter()
 
-        weatherReposatory = WeatherReposatory.getInstance()!!
         val viewModelFactory = HomeViewModelFactory(weatherReposatory)
         homeViewModel =
             ViewModelProvider(this, viewModelFactory).get(HomeViewModel::class.java)
@@ -155,7 +204,7 @@ class HomeFragment : Fragment(),OnNetworkChange {
                         Log.d("TAG", "AppiState.Success:end ")
                     }
                     is AppiState.Failure -> {
-                        Log.d("TAG", "AppiState.Failure: ")
+                        Log.d("TAG", "AppiState.Failure:${forecastData.message} ")
                         Toast.makeText(context, forecastData.message, Toast.LENGTH_SHORT).show()
                     }
                     is AppiState.Loading -> {
@@ -203,8 +252,24 @@ class HomeFragment : Fragment(),OnNetworkChange {
 
         if (isOnline) {
             Log.d("TAG", "onNetworkChange:isOnline start")
+            if (isFromFavorits==true) {
+                if (latitude != null || longitude != null) {
+                    Log.d("TAG", "isOnline:isFromFavorits ")
+                    homeViewModel.getForecastData(latitude.toString(), longitude.toString(), "metric")
+                    homeViewModel.getCurrentData(latitude.toString(), longitude.toString(), "metric")
+                }
+            }else if( sharedPreferenceLocation!=""){
+                val lat:String = sharedPreferenceLocation.split(",")[0]
+                val lon:String = sharedPreferenceLocation.split(",")[1]
+                Log.d("TAG", "onNetworkChange:getFreshhLocation start ${lat},${lon}")
+                homeViewModel.getForecastData(lat, lon, "metric")
+                homeViewModel.getCurrentData(lat, lon, "metric")
+            }
+            else{
                 getFreshhLocation()
-            Log.d("TAG", "onNetworkChange:getFreshhLocation after")
+                Log.d("TAG", "onNetworkChange:getFreshhLocation after")
+            }
+
         } else {
             Log.d("TAG", "onNetworkChange: else")
             Toast.makeText(appContext, "No internet connection", Toast.LENGTH_SHORT).show()
@@ -214,6 +279,7 @@ class HomeFragment : Fragment(),OnNetworkChange {
 
     @SuppressLint("MissingPermission")
     private fun getFreshhLocation() {
+        Log.d("TAG", "getFreshhLocation: start")
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireActivity())
         val locationRequest = LocationRequest.Builder(1).apply {
             setPriority(Priority.PRIORITY_BALANCED_POWER_ACCURACY)
