@@ -1,4 +1,4 @@
-package com.example.weathercast.alarmandnotification
+package com.example.weathercast.alarmandnotification.view
 
 import com.example.weathercast.data.pojo.AlertItem
 

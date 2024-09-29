@@ -1,15 +1,202 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".setting.SettingsFragment">
+    android:layout_height="match_parent">
 
-    <!-- TODO: Update blank fragment layout -->
+
     <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="center"
-        android:text="Setting" />
+        android:id="@+id/textView12"
+        android:layout_width="150dp"
+        android:layout_height="37dp"
+        android:background="@drawable/setting_item_rectangle"
+        android:padding="5dp"
+        android:text="@string/language"
+        android:textAlignment="center"
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toStartOf="@+id/guideline8"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/guideline9" />
 
-</FrameLayout>
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline8"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="196dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline9"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="35dp" />
+
+    <TextView
+        android:id="@+id/textView14"
+        android:layout_width="150dp"
+        android:layout_height="37dp"
+        android:background="@drawable/setting_item_rectangle"
+        android:padding="5dp"
+        android:text="@string/location"
+        android:textAlignment="center"
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/guideline8"
+        app:layout_constraintTop_toTopOf="@+id/guideline9" />
+
+    <RadioGroup
+        android:id="@+id/langGroup"
+        android:layout_width="178dp"
+        android:layout_height="143dp"
+        android:layout_marginTop="23dp"
+        android:background="@drawable/setting_radio_group_rectangle"
+        android:padding="18dp"
+        app:layout_constraintEnd_toStartOf="@+id/guideline8"
+        app:layout_constraintHorizontal_bias="0.605"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView12">
+
+        <RadioButton
+            android:id="@+id/radioEnglish"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:text="@string/english"
+            android:textColor="@color/white" />
+
+        <RadioButton
+            android:id="@+id/radioArabic"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/arabic"
+            android:textColor="@color/white" />
+    </RadioGroup>
+
+    <RadioGroup
+        android:id="@+id/locationGroup"
+        android:layout_width="178dp"
+        android:layout_height="143dp"
+        android:layout_marginTop="23dp"
+
+        android:background="@drawable/setting_radio_group_rectangle"
+        android:padding="18dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/guideline8"
+        app:layout_constraintTop_toBottomOf="@+id/textView14">
+
+        <RadioButton
+            android:id="@+id/radioGps"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:text="@string/gps"
+            android:textColor="@color/white" />
+
+        <RadioButton
+            android:id="@+id/radioMAp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/map"
+            android:textColor="@color/white" />
+    </RadioGroup>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline10"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="290dp" />
+
+    <TextView
+        android:id="@+id/textView13"
+        android:layout_width="150dp"
+        android:layout_height="37dp"
+        android:background="@drawable/setting_item_rectangle"
+        android:padding="5dp"
+        android:text="@string/wind_speed"
+        android:textAlignment="center"
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/guideline8"
+        app:layout_constraintTop_toTopOf="@+id/guideline10" />
+
+    <TextView
+        android:id="@+id/textView15"
+        android:layout_width="150dp"
+        android:layout_height="37dp"
+        android:background="@drawable/setting_item_rectangle"
+        android:padding="5dp"
+        android:text="@string/temperature"
+        android:textAlignment="center"
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toStartOf="@+id/guideline8"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/guideline10" />
+
+    <RadioGroup
+        android:id="@+id/tempGrpup"
+        android:layout_width="178dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/setting_radio_group_rectangle"
+        android:padding="18dp"
+        android:layout_marginTop="23dp"
+        app:layout_constraintEnd_toStartOf="@+id/guideline8"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView15">
+
+        <RadioButton
+            android:id="@+id/radioCelsius"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:text="@string/celsius"
+            android:textColor="@color/white" />
+
+        <RadioButton
+            android:id="@+id/radioKelvin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/kelvin"
+            android:layout_marginBottom="8dp"
+            android:textColor="@color/white" />
+        <RadioButton
+            android:id="@+id/radioFerenheit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/fehrinhiet"
+            android:textColor="@color/white" />
+    </RadioGroup>
+
+    <RadioGroup
+        android:id="@+id/windGroup"
+        android:layout_width="178dp"
+        android:layout_height="143dp"
+        android:layout_marginTop="23dp"
+        android:background="@drawable/setting_radio_group_rectangle"
+        android:padding="18dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/guideline8"
+        app:layout_constraintTop_toBottomOf="@+id/textView13">
+
+        <RadioButton
+            android:id="@+id/radioMeter"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:text="@string/meter"
+            android:textColor="@color/white" />
+
+        <RadioButton
+            android:id="@+id/radioMile"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/mile"
+            android:textColor="@color/white" />
+    </RadioGroup>
+</androidx.constraintlayout.widget.ConstraintLayout>

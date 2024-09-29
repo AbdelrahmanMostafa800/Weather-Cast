@@ -1,4 +1,4 @@
-package com.example.mvvm.db
+package com.example.weathercast.db.location
 
 import androidx.room.Dao
 import androidx.room.Insert
@@ -12,7 +12,7 @@ interface LocationDAO {
     @Query("SELECT * FROM favoritplaces")
      fun  getFavLocations(): Flow<List<Location>>
     @Insert
-    suspend fun insertLocation(location: Location)
+    suspend fun insertLocation(location: Location):Long
     @Query("DELETE FROM favoritplaces WHERE address = :address")
-    suspend fun deleteLocation(address: String)
+    suspend fun deleteLocation(address: String):Int
 }

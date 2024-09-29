@@ -1,21 +1,12 @@
-package com.example.weathercast
+package com.example.weathercast.homeweather.view
 
-import android.content.Context
-import android.content.DialogInterface
-import android.content.pm.PackageManager
-import android.location.LocationManager
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
-import androidx.core.app.ActivityCompat
 import androidx.navigation.NavController
-import androidx.navigation.fragment.findNavController
-import androidx.navigation.fragment.navArgs
+import com.example.weathercast.R
 
 
 class SplashFragment : Fragment() {

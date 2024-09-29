@@ -3,10 +3,13 @@ package com.example.weathercast.homeweather.view
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.content.res.Configuration
 import android.location.LocationManager
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
+import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -20,7 +23,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.Navigation.findNavController
 import androidx.navigation.ui.NavigationUI.setupWithNavController
-import com.example.mvvm.db.LocationLocalDataSource
+import com.example.weathercast.db.location.LocationLocalDataSource
 import com.example.mvvm.network.RemoteDataSource
 import com.example.weathercast.map.view.MapActivity
 import com.example.weathercast.R
@@ -29,14 +32,15 @@ import com.example.weathercast.viemodel.SharedPreferenceViewModelFactory
 import com.example.weathercast.data.localdatasource.SharedPreferencelLocationData
 import com.example.weathercast.data.localdatasource.WeatherLocalDataSource
 import com.example.weathercast.data.reposatoru.WeatherReposatory
+import com.example.weathercast.db.alert.AlarmLocallDataSource
+import com.example.weathercast.db.todayweather.TodayWeatherLocallDataSource
+import com.example.weathercast.viemodel.SettingViewModel
+import com.example.weathercast.viemodel.SettingViewModelFactory
 import com.example.weathercast.viemodel.ToolBarTextViewModel
 import com.google.android.material.navigation.NavigationView
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import java.util.Locale
 
 
 class MainActivity : AppCompatActivity() {
@@ -45,7 +49,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var navController : NavController
     lateinit var currentDestination: NavDestination
     lateinit var sharedPreferenceViewModel: SharedPreferenceViewModel
-
+    lateinit var settingViewModel: SettingViewModel
     lateinit var homeMenuItem: MenuItem
     lateinit var splashMenuItem: MenuItem
 
@@ -60,6 +64,23 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val remoteDataSource = RemoteDataSource()
+        val localRepository = WeatherLocalDataSource(
+            SharedPreferencelLocationData.getInstance(this),
+            LocationLocalDataSource.getInstance(this), AlarmLocallDataSource.getInstance(this))
+        val weatherReposatory = WeatherReposatory.getInstance(remoteDataSource, localRepository,
+            TodayWeatherLocallDataSource.getInstance(this))
+        val viewModelFactory = SharedPreferenceViewModelFactory(weatherReposatory)
+        sharedPreferenceViewModel =
+            ViewModelProvider(this, viewModelFactory).get(SharedPreferenceViewModel::class.java)
+        val settingViewModelFactory = SettingViewModelFactory(weatherReposatory)
+        settingViewModel =
+            ViewModelProvider(this, settingViewModelFactory).get(SettingViewModel::class.java)
+        changeLanguage(settingViewModel.getSettingLanguage())
+        val language=settingViewModel.getSettingLanguage()
+        var isRtl=false
+        if(language=="ar") isRtl=true
+        setLocale(language, isRtl)
         setContentView(R.layout.activity_main)
 //        toolBarTextViewModel = ViewModelProvider(this).get(ToolBarTextViewModel::class.java)
        /* val latitude = intent.getDoubleExtra("latitude", 0.0)
@@ -70,39 +91,21 @@ class MainActivity : AppCompatActivity() {
                 R.id.nav_host_fragment
             ).navigate(R.id.action_splashFragment_to_homeFragment2)
         }else {*/
-            navview = findViewById(R.id.nav_view)
-            drawerLayout = findViewById(R.id.main)
 
-            homeMenuItem = navview.menu.findItem(R.id.homeFragment)
-            splashMenuItem = navview.menu.findItem(R.id.splashFragment)
-        val remoteDataSource = RemoteDataSource()
-        val localRepository = WeatherLocalDataSource(SharedPreferencelLocationData.getInstance(this),
-            LocationLocalDataSource.getInstance(this))
-        val weatherReposatory = WeatherReposatory.getInstance(remoteDataSource, localRepository)
-        val viewModelFactory = SharedPreferenceViewModelFactory(weatherReposatory)
-        sharedPreferenceViewModel =
-            ViewModelProvider(this, viewModelFactory).get(SharedPreferenceViewModel::class.java)
+
+        navview = findViewById(R.id.nav_view)
+        drawerLayout = findViewById(R.id.main)
+
+        homeMenuItem = navview.menu.findItem(R.id.homeFragment)
+        splashMenuItem = navview.menu.findItem(R.id.splashFragment)
 
             val toolbar: Toolbar = findViewById(R.id.toolbar)
             setSupportActionBar(toolbar)
-        /*CoroutineScope(Dispatchers.Main).launch {
-            toolbarTitleFlow.collectLatest { title ->
-                supportActionBar?.title = title
-            }
-        }*/
         lifecycleScope.launch {
             toolBarTextViewModel.toolbarTitleFlow.collectLatest { title ->
                 supportActionBar?.title = title
             }
         }
-        /*lifecycleScope.launch {
-            Log.d("toolbar", "lifecycleScope: start")
-            toolBarTextViewModel.toolbarTitle.collect { title ->
-                Log.d("toolbar", "lifecycleScope: ${title}")
-                getSupportActionBar()?.setTitle(title);
-//                toolbar.title = title
-            }
-        }*/
         navController = findNavController(this, R.id.nav_host_fragment)
             setupWithNavController(navview, navController)
             currentDestination = navController.currentDestination!!
@@ -177,11 +180,6 @@ class MainActivity : AppCompatActivity() {
             }
 
     }
-    /*fun emitToolbarTitle(title: String) {
-        CoroutineScope(Dispatchers.Main).launch {
-            _toolbarTitleFlow.emit(title)
-        }
-    }*/
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
@@ -246,7 +244,15 @@ class MainActivity : AppCompatActivity() {
             LocationManager.NETWORK_PROVIDER
         )
     }
-
+    private fun changeLanguage(lang: String) {
+        Log.d("lang", "changeLanguage: $lang")
+        val locale = Locale(lang)
+        Log.d("lang", "changeLanguage: $lang")
+        Locale.setDefault(locale)
+        val config = resources.configuration
+        config.locale = locale
+        baseContext.resources.updateConfiguration(config, baseContext.resources.displayMetrics)
+    }
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             android.R.id.home -> {
@@ -259,5 +265,16 @@ class MainActivity : AppCompatActivity() {
             }
         }
         return super.onOptionsItemSelected(item)
+    }
+    private fun setLocale(language: String, isRtl: Boolean) {
+        val locale = Locale(language)
+        Locale.setDefault(locale)
+
+        val config = Configuration(resources.configuration)
+        config.setLocale(locale)
+        config.setLayoutDirection(locale)
+
+        // Update the configuration
+        resources.updateConfiguration(config, resources.displayMetrics)
     }
 }

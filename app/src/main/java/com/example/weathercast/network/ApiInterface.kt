@@ -12,13 +12,15 @@ interface ApiInterface {
         @Query("lat") lat: String,
         @Query("lon") lon: String,
         @Query("units") units: String = "metric",
-        @Query("appid") appId: String
+        @Query("appid") appId: String,
+        @Query("lang") language:String
     ): ForcastWeatherData
     @GET("data/2.5/weather")
     suspend fun getCurrentWeathertData(
         @Query("lat") lat: String,
         @Query("lon") lon: String,
         @Query("units") units: String = "metric",
-        @Query("appid") appId: String
+        @Query("appid") appId: String,
+        @Query("lang") language:String
     ): CurrentWeatherData
 }

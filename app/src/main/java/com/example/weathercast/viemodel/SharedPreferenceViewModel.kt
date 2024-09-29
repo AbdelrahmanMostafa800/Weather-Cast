@@ -5,8 +5,8 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.weathercast.data.reposatoru.WeatherReposatoryInterface
 
 class SharedPreferenceViewModel(private val weatherReposatory: WeatherReposatoryInterface): ViewModel() {
-    fun saveLocation(latitude: Double, longitude: Double) {
-        weatherReposatory.saveLocation(latitude, longitude)
+    fun saveLocation(latitude: Double, longitude: Double):Int {
+       return weatherReposatory.saveLocation(latitude, longitude)
     }
     fun getLocation(): String? {
         return weatherReposatory.getLocation()

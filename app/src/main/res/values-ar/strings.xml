@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Weather Cast</string>
+    <string name="weather_location">الإسكندرية/مصر</string>
+    <string name="weather_condition">غائم في الغالب</string>
+    <string name="degreeo">o</string>
+    <string name="today">اليوم</string>
+    <string name="next_five_days">اليومي</string>
+    <string name="home">الصفحة الرئيسية</string>
+    <string name="favorits">المفضلة</string>
+    <string name="alarm_and_notification">الإشعارات والتنبيهات</string>
+    <string name="settings">الإعدادات</string>
+    <string name="deg">\t°</string>
+    <string name="splash_text">يرجى تمكين إذن الموقع للحصول على حالة الطقس</string>
+    <string name="splash_fromhere"><u>تفعيل</u></string>
+    <string name="select">اختر هذا الموقع</string>
+    <string name="no">لا</string>
+    <string name="yes">نعم</string>
+    <string name="save">حفظ</string>
+    <string name="alarm">منبه</string>
+    <string name="notification">إشعار</string>
+    <string name="from">من</string>
+    <string name="to">إلى</string>
+    <string name="language">اللغة</string>
+    <string name="location">الموقع</string>
+    <string name="english">الإنجليزية</string>
+    <string name="arabic">العربية</string>
+    <string name="gps">موقعي الحالي</string>
+    <string name="map">الخريطة</string>
+    <string name="wind_speed">سرعة الرياح</string>
+    <string name="temperature">درجة الحرارة</string>
+    <string name="celsius">مئوية</string>
+    <string name="kelvin">كلفن</string>
+    <string name="fehrinhiet">فهرنهايت</string>
+    <string name="meter">متر / ثانية</string>
+    <string name="mile">ميل / ساعة</string>
+</resources>

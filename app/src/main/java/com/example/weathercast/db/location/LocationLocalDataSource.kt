@@ -1,18 +1,17 @@
-package com.example.mvvm.db
+package com.example.weathercast.db.location
 
 import android.content.Context
 import com.example.weathercast.data.pojo.Location
 import kotlinx.coroutines.flow.Flow
 
 class LocationLocalDataSource(context: Context) : LocationLocalDataSourceInterface {
-    var dao: LocationDAO =  AppDataBase.getInstance(context)?.getLocationDAO()!!
-//    var storeProduct: LiveData<List<Productdb>> = dao.allProducts
-    override suspend fun insertLocation(location: Location) {
-         dao.insertLocation(location)
+    var dao: LocationDAO =  LocationAppDataBase.getInstance(context)?.getLocationDAO()!!
+    override suspend fun insertLocation(location: Location):Long {
+        return dao.insertLocation(location)
     }
 
-    override suspend fun deleteLocation(address: String) {
-            dao.deleteLocation(address)
+    override suspend fun deleteLocation(address: String):Int {
+         return  dao.deleteLocation(address)
     }
 
     override  fun getFavLocation(): Flow<List<Location>> {

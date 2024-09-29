@@ -1,5 +1,6 @@
-package com.example.weathercast.alarmandnotification
+package com.example.weathercast.alarmandnotification.view
 
+import android.annotation.SuppressLint
 import android.app.*
 import android.content.Intent
 import android.media.MediaPlayer
@@ -7,28 +8,48 @@ import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Build
 import android.os.IBinder
+import android.os.Looper
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.WindowManager
 import android.widget.Button
 import androidx.core.app.NotificationCompat
+import androidx.lifecycle.ViewModelProvider
+import com.example.mvvm.network.RemoteDataSource
 import com.example.weathercast.R
+import com.example.weathercast.data.localdatasource.SharedPreferencelLocationData
+import com.example.weathercast.data.localdatasource.WeatherLocalDataSource
+import com.example.weathercast.data.reposatoru.WeatherReposatory
+import com.example.weathercast.db.alert.AlarmLocallDataSource
+import com.example.weathercast.db.location.LocationLocalDataSource
+import com.example.weathercast.db.todayweather.TodayWeatherLocallDataSource
+import com.example.weathercast.homeweather.viewmodel.HomeViewModel
+import com.example.weathercast.homeweather.viewmodel.HomeViewModelFactory
+import com.example.weathercast.viemodel.SettingViewModel
+import com.example.weathercast.viemodel.SettingViewModelFactory
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationResult
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.Priority
 
 class FloatingAlarmService : Service() {
-
+    private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     private lateinit var windowManager: WindowManager
     private lateinit var floatingView: View
     private var mediaPlayer: MediaPlayer? = null
     private val CHANNEL_ID = "AlarmNotificationChannel"
-
     override fun onCreate() {
         super.onCreate()
+
 
         // Create a notification channel for Android O and higher
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
                 CHANNEL_ID,
-                "Alarm Notifications",
+                "Weather Notifications",
                 NotificationManager.IMPORTANCE_HIGH
             )
             val manager = getSystemService(NotificationManager::class.java)
@@ -79,10 +100,9 @@ class FloatingAlarmService : Service() {
         val pendingIntent = PendingIntent.getActivity(
             this, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE
         )
-
         return NotificationCompat.Builder(this, CHANNEL_ID)
-            .setSmallIcon(R.drawable.icon_01d) // Set a small icon
-            .setContentTitle("Alarm is ringing")
+            .setSmallIcon(R.drawable.cloud2) // Set a small icon
+            .setContentTitle("Current Weather")
             .setContentText("Tap to dismiss")
             .setContentIntent(pendingIntent)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
@@ -94,7 +114,6 @@ class FloatingAlarmService : Service() {
         mediaPlayer?.release()
         mediaPlayer = null
     }
-
     override fun onDestroy() {
         super.onDestroy()
         if (::windowManager.isInitialized) {

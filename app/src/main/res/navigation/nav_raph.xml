@@ -36,12 +36,12 @@
         tools:layout="@layout/fragment_settings" />
     <fragment
         android:id="@+id/alarmAndNotificationFragment"
-        android:name="com.example.weathercast.alarmandnotification.AlarmAndNotificationFragment"
+        android:name="com.example.weathercast.alarmandnotification.view.AlarmAndNotificationFragment"
         android:label="fragment_alarm_and_notification"
         tools:layout="@layout/fragment_alarm_and_notification" />
     <fragment
         android:id="@+id/splashFragment"
-        android:name="com.example.weathercast.SplashFragment"
+        android:name="com.example.weathercast.homeweather.view.SplashFragment"
         android:label="fragment_splash"
         tools:layout="@layout/fragment_splash" >
 

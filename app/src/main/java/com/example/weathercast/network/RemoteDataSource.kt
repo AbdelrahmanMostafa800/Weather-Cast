@@ -14,22 +14,18 @@ class RemoteDataSource() : RemoteDataSourceInterface {
     override suspend fun getForecastData(
         latitude: String,
         longitude: String,
-        measurementUnit: String
+        measurementUnit: String,language:String
     ): Flow<ForcastWeatherData> =flow{
-        try {
-            val response = apiService.getForecastData(latitude, longitude,measurementUnit,appId="ed06dd80726ae839deb870c92c41bb01")
+            val response = apiService.getForecastData(latitude, longitude,measurementUnit,appId="ed06dd80726ae839deb870c92c41bb01",language)
             emit(response)
-        }catch (e:Exception){
-            throw e
-        }
     }
     override suspend fun getCurrentData(
         latitude: String,
         longitude: String,
-        measurementUnit: String
+        measurementUnit: String,language:String
     ): CurrentWeatherData {
         try {
-            val response = apiService.getCurrentWeathertData(latitude, longitude,measurementUnit,appId="ed06dd80726ae839deb870c92c41bb01")
+            val response = apiService.getCurrentWeathertData(latitude, longitude,measurementUnit,appId="ed06dd80726ae839deb870c92c41bb01",language)
             return response
         }catch (e:Exception){
             throw e

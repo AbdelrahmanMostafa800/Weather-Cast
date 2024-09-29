@@ -1,4 +1,4 @@
-package com.example.weathercast.alarmandnotification
+package com.example.weathercast.alarmandnotification.view
 
 import android.content.BroadcastReceiver
 import android.content.Context

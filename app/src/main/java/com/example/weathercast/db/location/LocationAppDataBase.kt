@@ -1,4 +1,4 @@
-package com.example.mvvm.db
+package com.example.weathercast.db.location
 
 
 
@@ -10,19 +10,19 @@ import com.example.weathercast.data.pojo.Location
 
 
 @Database(entities = [Location::class], version = 1)
-abstract class AppDataBase : RoomDatabase() {
+abstract class LocationAppDataBase : RoomDatabase() {
     abstract fun getLocationDAO(): LocationDAO?
 
     companion object {
         @Volatile
-        private var instance: AppDataBase? = null
+        private var instance: LocationAppDataBase? = null
 
         @Synchronized
-        fun getInstance(context: Context): AppDataBase? {
+        fun getInstance(context: Context): LocationAppDataBase? {
             if (instance == null) {
                 instance = databaseBuilder(
                     context.applicationContext,
-                    AppDataBase::class.java, "product_database"
+                    LocationAppDataBase::class.java, "location_database"
                 ).build()
             }
             return instance

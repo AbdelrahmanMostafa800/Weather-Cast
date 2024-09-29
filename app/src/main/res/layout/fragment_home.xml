@@ -6,7 +6,7 @@
     <data>
         <variable
             name="HFVModel"
-            type="com.example.weathercast.homeweather.viewmodel.HomeViewModel" />
+            type="com.example.weathercast.data.pojo.CurrentWeatherData" />
         <variable
             name="currentdate"
             type="String" />
@@ -45,8 +45,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="29dp"
                     android:layout_marginTop="7dp"
-                    app:countryCode="@{HFVModel.currenWeatherData.sys.country}"
-                    app:cityName="@{HFVModel.currenWeatherData.name}"
+                    app:countryCode="@{HFVModel.sys.country}"
+                    app:cityName="@{HFVModel.name}"
                     android:textColor="@color/white"
                     android:textSize="20sp"
                     android:textStyle="bold"
@@ -60,7 +60,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="28dp"
-                    android:text="@{HFVModel.currenWeatherData.weather.get(0).description}"
+                    android:text="@{HFVModel.weather.get(0).description}"
                     android:textColor="@color/white"
                     android:textSize="20sp"
                     android:textStyle="bold"
@@ -79,14 +79,14 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/textView2"
                     app:error="@{@android:drawable/ic_dialog_alert}"
-                    app:imageIcon="@{HFVModel.currenWeatherData.weather.get(0).icon}"/>
+                    app:imageIcon="@{HFVModel.weather.get(0).icon}"/>
 
                 <TextView
                     android:id="@+id/weather_degree"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
-                    android:text="@{String.valueOf(Math.round(HFVModel.currenWeatherData.main.temp))}"
+                    android:text="@{String.valueOf(Math.round(HFVModel.main.temp))}"
                     android:textColor="@color/white"
                     android:textSize="70sp"
                     android:textStyle="bold"

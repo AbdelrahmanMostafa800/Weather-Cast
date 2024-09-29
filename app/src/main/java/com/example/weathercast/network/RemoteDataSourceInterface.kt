@@ -6,10 +6,10 @@ import kotlinx.coroutines.flow.Flow
 
 
 interface RemoteDataSourceInterface {
-    suspend fun getForecastData(latitude: String, longitude: String, measurementUnit: String): Flow<ForcastWeatherData>
+    suspend fun getForecastData(latitude: String, longitude: String, measurementUnit: String,language:String): Flow<ForcastWeatherData>
     suspend fun getCurrentData(
         latitude: String,
         longitude: String,
-        measurementUnit: String
+        measurementUnit: String,language:String
     ): CurrentWeatherData
 }

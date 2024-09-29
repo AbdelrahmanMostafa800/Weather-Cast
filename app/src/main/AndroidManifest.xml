@@ -32,11 +32,11 @@
             </intent-filter>
         </activity>
 
-        <receiver android:name=".alarmandnotification.AlarmReceiver"
+        <receiver android:name=".alarmandnotification.view.AlarmReceiver"
             android:exported="true" />
 
         <service
-            android:name=".alarmandnotification.FloatingAlarmService"
+            android:name=".alarmandnotification.view.FloatingAlarmService"
             android:permission="android.permission.FOREGROUND_SERVICE"
             android:exported="false"
             android:foregroundServiceType="mediaProjection"

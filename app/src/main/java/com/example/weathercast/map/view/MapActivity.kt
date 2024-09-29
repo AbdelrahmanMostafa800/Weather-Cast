@@ -8,7 +8,7 @@ import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
-import com.example.mvvm.db.LocationLocalDataSource
+import com.example.weathercast.db.location.LocationLocalDataSource
 import com.example.mvvm.network.RemoteDataSource
 import com.example.weathercast.viemodel.SharedPreferenceViewModel
 import com.example.weathercast.viemodel.SharedPreferenceViewModelFactory
@@ -17,10 +17,13 @@ import com.example.weathercast.data.localdatasource.WeatherLocalDataSource
 import com.example.weathercast.data.pojo.Location
 import com.example.weathercast.data.reposatoru.WeatherReposatory
 import com.example.weathercast.databinding.ActivityMapBinding
+import com.example.weathercast.db.alert.AlarmLocallDataSource
+import com.example.weathercast.db.todayweather.TodayWeatherLocallDataSource
 import com.example.weathercast.homeweather.view.MainActivity
 import com.example.weathercast.viemodel.DbViewModel
 import com.example.weathercast.viemodel.DbViewModelFactory
-import com.example.weathercast.viemodel.ToolBarTextViewModel
+import com.example.weathercast.viemodel.SettingViewModel
+import com.example.weathercast.viemodel.SettingViewModelFactory
 import org.osmdroid.config.Configuration
 import org.osmdroid.events.MapEventsReceiver
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
@@ -39,9 +42,26 @@ class MapActivity : AppCompatActivity() {
     var lat:Double?=null
     var isFavoritsFragment=false
     var address=""
-
+    lateinit var settingViewModel: SettingViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        val remoteDataSource = RemoteDataSource()
+        val localRepository = WeatherLocalDataSource(
+            SharedPreferencelLocationData.getInstance(this),
+            LocationLocalDataSource.getInstance(this), AlarmLocallDataSource.getInstance(this))
+        val weatherReposatory = WeatherReposatory.getInstance(remoteDataSource, localRepository,
+            TodayWeatherLocallDataSource.getInstance(this))
+        val sharedViewModelFactory = SharedPreferenceViewModelFactory(weatherReposatory)
+        sharedPreferenceViewModel =
+            ViewModelProvider(this, sharedViewModelFactory).get(SharedPreferenceViewModel::class.java)
+        val settingViewModelFactory = SettingViewModelFactory(weatherReposatory)
+        settingViewModel =
+            ViewModelProvider(this, settingViewModelFactory).get(SettingViewModel::class.java)
+        changeLanguage(settingViewModel.getSettingLanguage())
+        val language=settingViewModel.getSettingLanguage()
+        var isRtl=false
+        if(language=="ar") isRtl=true
+        setLocale(language, isRtl)
         super.onCreate(savedInstanceState)
 
         isFavoritsFragment=intent.getBooleanExtra("isFromFavorits",false)
@@ -55,13 +75,7 @@ class MapActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         setupMap()
-        val remoteDataSource = RemoteDataSource()
-        val localRepository = WeatherLocalDataSource(SharedPreferencelLocationData.getInstance(this),
-            LocationLocalDataSource.getInstance(this))
-        val weatherReposatory = WeatherReposatory.getInstance(remoteDataSource, localRepository)
-        val sharedViewModelFactory = SharedPreferenceViewModelFactory(weatherReposatory)
-         sharedPreferenceViewModel =
-            ViewModelProvider(this, sharedViewModelFactory).get(SharedPreferenceViewModel::class.java)
+
         val dBViewModelFactory = DbViewModelFactory(weatherReposatory)
         dbViewModel =
             ViewModelProvider(this, dBViewModelFactory).get(DbViewModel::class.java)
@@ -149,5 +163,23 @@ class MapActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         binding.map.onDetach() // Detach the map view to prevent memory leaks
+    }
+    private fun changeLanguage(lang: String) {
+        Log.d("lang", "changeLanguage: $lang")
+        val locale = Locale(lang)
+        Log.d("lang", "changeLanguage: $lang")
+        Locale.setDefault(locale)
+        val config = resources.configuration
+        config.locale = locale
+        baseContext.resources.updateConfiguration(config, baseContext.resources.displayMetrics)
+    }
+    private fun setLocale(language: String, isRtl: Boolean) {
+        val locale = Locale(language)
+        Locale.setDefault(locale)
+        val config = android.content.res.Configuration(resources.configuration)
+        config.setLocale(locale)
+        config.setLayoutDirection(locale)
+        // Update the configuration
+        resources.updateConfiguration(config, resources.displayMetrics)
     }
 }

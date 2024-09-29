@@ -1,6 +1,7 @@
 package com.example.weathercast.viemodel
 
 import com.example.weathercast.data.pojo.AlertItem
+import com.example.weathercast.data.pojo.City
 import com.example.weathercast.data.pojo.CurrentWeatherData
 import com.example.weathercast.data.pojo.ForcastWeatherData
 import com.example.weathercast.data.pojo.Location
@@ -91,5 +92,29 @@ class FakeWeatherReposatory(val fakelocation:String): WeatherReposatoryInterface
 
     override fun getSettingLanguage(): String {
         return fakelanguage
+    }
+
+    override suspend fun insertForecastWeatherData(forecastWeatherData: ForcastWeatherData) {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun insertCurrentWeatherData(currentWeatherData: CurrentWeatherData) {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun insertCity(city: City) {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun getAllForecastWeatherData(): List<ForcastWeatherData> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun getAllCurrentWeatherData(): List<CurrentWeatherData> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun getAllCities(): List<City> {
+        TODO("Not yet implemented")
     }
 }

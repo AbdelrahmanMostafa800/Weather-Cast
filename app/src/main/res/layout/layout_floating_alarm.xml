@@ -4,14 +4,14 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:background="@color/black"
     android:padding="16dp">
 
     <TextView
         android:id="@+id/alarmText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Alarm is ringing!"
+        android:text="Weather Cast"
+        android:layout_marginBottom="10dp"
         android:textSize="18sp"
         android:textColor="@android:color/black"/>
 
@@ -20,7 +20,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Dismiss"
-        android:textColor="@android:color/white"
-        android:background="@android:color/holo_red_light"/>
+        android:background="@android:color/holo_red_light"
+        android:textColor="@android:color/white"/>
 
 </LinearLayout>

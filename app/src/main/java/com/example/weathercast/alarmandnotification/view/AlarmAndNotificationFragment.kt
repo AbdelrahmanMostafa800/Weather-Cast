@@ -1,9 +1,10 @@
-package com.example.weathercast.alarmandnotification
+package com.example.weathercast.alarmandnotification.view
 
 import android.app.DatePickerDialog
 import android.app.Dialog
 import android.app.TimePickerDialog
 import android.content.Intent
+import android.content.res.Configuration
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -16,10 +17,24 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.weathercast.db.location.LocationLocalDataSource
+import com.example.mvvm.network.RemoteDataSource
+import com.example.weathercast.alarmandnotification.viewmodel.AlertStatus
+import com.example.weathercast.alarmandnotification.viewmodel.AlertViewModel
+import com.example.weathercast.alarmandnotification.viewmodel.AlertViewModelFactory
+import com.example.weathercast.data.localdatasource.SharedPreferencelLocationData
+import com.example.weathercast.data.localdatasource.WeatherLocalDataSource
 import com.example.weathercast.data.pojo.AlertItem
+import com.example.weathercast.data.reposatoru.WeatherReposatory
 import com.example.weathercast.databinding.AddAlarmCustomDialogBinding
 import com.example.weathercast.databinding.FragmentAlarmAndNotificationBinding
+import com.example.weathercast.db.alert.AlarmLocallDataSource
+import com.example.weathercast.db.todayweather.TodayWeatherLocallDataSource
+import com.example.weathercast.viemodel.SettingViewModel
+import com.example.weathercast.viemodel.SettingViewModelFactory
 import com.example.weathercast.viemodel.ToolBarTextViewModel
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
@@ -28,13 +43,33 @@ import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
-class AlarmAndNotificationFragment : Fragment() {
+class AlarmAndNotificationFragment : Fragment(),OnAlarmItemDeleteClick {
     private val toolBarTextViewModel: ToolBarTextViewModel by activityViewModels()
     private lateinit var binding: AddAlarmCustomDialogBinding
     private lateinit var fragmentBinding: FragmentAlarmAndNotificationBinding
-
+lateinit var alertAdapter:AlertWeatherDiffUtillAdapter
+    lateinit var alertViewModel: AlertViewModel
+    lateinit var alertScheduler: AlertSchedulerInterface
     private val OVERLAY_PERMISSION_REQUEST_CODE = 1234
-
+    lateinit var settingViewModel: SettingViewModel
+    var language=""
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        val remoteDataSource = RemoteDataSource()
+        val localRepository = WeatherLocalDataSource(
+            SharedPreferencelLocationData.getInstance(requireContext()),
+            LocationLocalDataSource.getInstance(requireContext()),AlarmLocallDataSource.getInstance(requireContext()))
+        val weatherReposatory = WeatherReposatory.getInstance(remoteDataSource, localRepository,
+            TodayWeatherLocallDataSource.getInstance(requireContext()))
+        val alertViewModelFactory = AlertViewModelFactory(weatherReposatory)
+        alertViewModel =
+            ViewModelProvider(this, alertViewModelFactory).get(AlertViewModel::class.java)
+        val settingViewModelFactory = SettingViewModelFactory(weatherReposatory)
+        settingViewModel =
+            ViewModelProvider(this, settingViewModelFactory).get(SettingViewModel::class.java)
+         language=settingViewModel.getSettingLanguage()
+        setLocale(language)
+    }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -45,11 +80,45 @@ class AlarmAndNotificationFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewLifecycleOwner.lifecycleScope.launch {
-            toolBarTextViewModel.setToolbarTitle("Alarm")
+        alertScheduler = AlertScheduler(requireContext())
+        val favoritesString = if (language == "ar") {
+            "التنبيهات"
+        } else {
+            "Alerts & Notifications"
         }
+        viewLifecycleOwner.lifecycleScope.launch {
+            toolBarTextViewModel.setToolbarTitle(favoritesString)
+        }
+
         fragmentBinding.addButton.setOnClickListener {
             showDialog()
+        }
+        alertAdapter=AlertWeatherDiffUtillAdapter(this)
+        fragmentBinding.alertRecyclerView.layoutManager = LinearLayoutManager(context)
+        fragmentBinding.alertRecyclerView.adapter=alertAdapter
+        alertViewModel.getAllAlerts()
+
+        lifecycleScope.launch {
+            alertViewModel.allAlertData.collect { alertStatus ->
+                when (alertStatus) {
+                    is AlertStatus.Loading -> {
+                        Toast.makeText(context, "Loading", Toast.LENGTH_SHORT).show()
+                    }
+                    is AlertStatus.Success -> {
+                        // Handle success state
+                        val alertItems = alertStatus.data
+                        alertAdapter.submitList(alertItems)
+                    }
+                    is AlertStatus.Failure -> {
+                        // Handle failure state
+                        val message = alertStatus.message
+                        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+                    }
+                    is AlertStatus.Empty -> {
+                        // Handle empty state
+                    }
+                }
+            }
         }
 
     }
@@ -87,6 +156,7 @@ class AlarmAndNotificationFragment : Fragment() {
         }
 
         dialog.show()
+
     }
     private fun showDateTimePicker(timeTextView: TextView, dateTextView: TextView) {
         val calendar = Calendar.getInstance()
@@ -167,9 +237,11 @@ class AlarmAndNotificationFragment : Fragment() {
         Log.d("alarm", "setAlarm:$date2")
 
         val localDateTime = getLocalDateTimeFromText(date1, time1)
-                val alertScheduler: AlertSchedulerInterface = AlertScheduler(requireContext())
+
         if (localDateTime != null) {
-            alertScheduler.schedule(AlertItem(localDateTime,"city","country",3.5,5.5))
+            val alertItem = AlertItem(time=localDateTime, city ="city", country = "country", lat = 3.5, lon = 5.5)
+            alertScheduler.schedule(alertItem)
+            alertViewModel.addAlert(alertItem)
         }
 
     }
@@ -248,4 +320,25 @@ class AlarmAndNotificationFragment : Fragment() {
         // Handle what to do when the permission is denied (e.g., show a toast or disable features)
         Toast.makeText(context, "Overlay permission denied", Toast.LENGTH_SHORT).show()
     }
+
+    override fun onDeleteClick(alarmItem: AlertItem) {
+        alertScheduler.cancel(alarmItem)
+        alertViewModel.deleteAlert(alarmItem)
+    }
+    private  fun setLocale(lang: String?) {
+        val locale = Locale(lang)
+        Locale.setDefault(locale)
+
+        val config = Configuration(resources.configuration)
+        config.setLocale(locale)
+        config.setLayoutDirection(locale)
+
+        // Update the configuration
+        requireActivity().resources.updateConfiguration(config, resources.displayMetrics)
+        if (lang == "ar") {
+            requireActivity().window.decorView.layoutDirection = View.LAYOUT_DIRECTION_RTL
+        } else {
+            requireActivity().window.decorView.layoutDirection = View.LAYOUT_DIRECTION_LTR
+        }}
+
 }

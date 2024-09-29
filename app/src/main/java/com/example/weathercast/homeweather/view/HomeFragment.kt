@@ -20,6 +20,7 @@ import androidx.databinding.BindingAdapter
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -37,14 +38,18 @@ import java.util.Date
 import java.util.Locale
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.asFlow
-import com.example.mvvm.db.LocationLocalDataSource
+import com.example.weathercast.db.location.LocationLocalDataSource
 import com.example.mvvm.network.RemoteDataSource
 import com.example.mvvm.network.RemoteDataSourceInterface
 import com.example.weathercast.viemodel.SharedPreferenceViewModel
 import com.example.weathercast.viemodel.SharedPreferenceViewModelFactory
 import com.example.weathercast.data.localdatasource.SharedPreferencelLocationData
 import com.example.weathercast.data.localdatasource.WeatherLocalDataSource
+import com.example.weathercast.db.alert.AlarmLocallDataSource
+import com.example.weathercast.db.todayweather.TodayWeatherLocallDataSource
 import com.example.weathercast.homeweather.viewmodel.AppiState
+import com.example.weathercast.viemodel.SettingViewModel
+import com.example.weathercast.viemodel.SettingViewModelFactory
 import com.example.weathercast.viemodel.ToolBarTextViewModel
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
@@ -74,7 +79,8 @@ class HomeFragment : Fragment(),OnNetworkChange  {
     var latitude: Double? = null
     var longitude: Double? = null
     var isFromFavorits: Boolean? = false
-
+    lateinit var settingViewModel: SettingViewModel
+    var language=""
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Log.d("toolbar", "home frag onCreate: start")
@@ -90,11 +96,18 @@ class HomeFragment : Fragment(),OnNetworkChange  {
            }
         }*/
          remoteDataSource = RemoteDataSource()
-         localRepository = WeatherLocalDataSource(SharedPreferencelLocationData.getInstance(requireContext()),LocationLocalDataSource.getInstance(requireContext()))
-         weatherReposatory = WeatherReposatory.getInstance(remoteDataSource, localRepository)
+         localRepository = WeatherLocalDataSource(
+            SharedPreferencelLocationData.getInstance(requireContext()),
+            LocationLocalDataSource.getInstance(requireContext()), AlarmLocallDataSource.getInstance(requireContext()))
+         weatherReposatory = WeatherReposatory.getInstance(remoteDataSource, localRepository,
+             TodayWeatherLocallDataSource.getInstance(requireContext()))
         val viewModelFactory = SharedPreferenceViewModelFactory(weatherReposatory)
         sharedPreferenceViewModel =
             ViewModelProvider(this, viewModelFactory).get(SharedPreferenceViewModel::class.java)
+        val settingViewModelFactory = SettingViewModelFactory(weatherReposatory)
+        settingViewModel =
+            ViewModelProvider(this, settingViewModelFactory).get(SettingViewModel::class.java)
+        language=settingViewModel.getSettingLanguage()
         if (sharedPreferenceViewModel.getLocation()!="null,null"){
             sharedPreferenceLocation= sharedPreferenceViewModel.getLocation().toString()
         }
@@ -113,17 +126,26 @@ class HomeFragment : Fragment(),OnNetworkChange  {
          longitude = arguments?.getDouble("longitude")
         isFromFavorits= arguments?.getBoolean("isFromFavorits")
         Log.d("fav", "onViewCreated:${isFromFavorits},${latitude},${longitude} ")
-        if (isFromFavorits==true) {
-            viewLifecycleOwner.lifecycleScope.launch {
-                toolBarTextViewModel.setToolbarTitle("Favorites")
+
+
+        val favoritesString =if (isFromFavorits==true) {
+            if (language == "ar") {
+                "المفضله"
+            } else {
+                "Favorits"
             }
+
         }else{
-            viewLifecycleOwner.lifecycleScope.launch {
-                toolBarTextViewModel.setToolbarTitle("Home")
+            if (language == "ar") {
+                "الرئيسيه"
+            } else {
+                "Home"
             }
         }
 
-
+        viewLifecycleOwner.lifecycleScope.launch {
+            toolBarTextViewModel.setToolbarTitle(favoritesString)
+        }
         progressBar=view.findViewById(R.id.progressBar)
 
         /*receiver= MyConnectionReceiver(this)
@@ -156,8 +178,12 @@ class HomeFragment : Fragment(),OnNetworkChange  {
         val viewModelFactory = HomeViewModelFactory(weatherReposatory)
         homeViewModel =
             ViewModelProvider(this, viewModelFactory).get(HomeViewModel::class.java)
-        binding.hfvModel = homeViewModel
+        homeViewModel.currenWeatherData.observe(viewLifecycleOwner, Observer { current ->
+            binding.hfvModel=current
+        })
         binding.lifecycleOwner = this
+
+
 
         val dateFormat = SimpleDateFormat("EEE, dd MMMM  h:mm a", Locale.getDefault())
         val currentDateAndTime: String = dateFormat.format(Date())
@@ -165,11 +191,17 @@ class HomeFragment : Fragment(),OnNetworkChange  {
         Log.d("TAG", "onViewCreated:before registerNetworkBroadcastReceiver")
         registerNetworkBroadcastReceiver()
         Log.d("TAG", "onViewCreated:After registerNetworkBroadcastReceiver")
+       /* homeViewModel.currenWeatherData.observe(viewLifecycleOwner, Observer { current ->
+            homeViewModel.insertCurrentWeatherData(current)
+        })*/
         lifecycleScope.launch {
             homeViewModel.forcastWeatherData.asFlow().collect() { forecastData ->
                 Log.d("TAG", "forcastWeatherData:Start ")
                 when(forecastData) {
                     is AppiState.Success -> {
+                        /*if (homeViewModel.cities.value == null){
+                            homeViewModel.insertForecastWeatherData(forecastData.data)
+                        }*/
                         Log.d("TAG", "AppiState.Success: ")
                         progressBar.visibility = View.GONE
                         Toast.makeText(context, "Success", Toast.LENGTH_SHORT).show()
@@ -255,15 +287,15 @@ class HomeFragment : Fragment(),OnNetworkChange  {
             if (isFromFavorits==true) {
                 if (latitude != null || longitude != null) {
                     Log.d("TAG", "isOnline:isFromFavorits ")
-                    homeViewModel.getForecastData(latitude.toString(), longitude.toString(), "metric")
-                    homeViewModel.getCurrentData(latitude.toString(), longitude.toString(), "metric")
+                    homeViewModel.getForecastData(latitude.toString(), longitude.toString(), settingViewModel.getSettingTemp(),language)
+                    homeViewModel.getCurrentData(latitude.toString(), longitude.toString(), settingViewModel.getSettingTemp(),language)
                 }
             }else if( sharedPreferenceLocation!=""){
                 val lat:String = sharedPreferenceLocation.split(",")[0]
                 val lon:String = sharedPreferenceLocation.split(",")[1]
                 Log.d("TAG", "onNetworkChange:getFreshhLocation start ${lat},${lon}")
-                homeViewModel.getForecastData(lat, lon, "metric")
-                homeViewModel.getCurrentData(lat, lon, "metric")
+                homeViewModel.getForecastData(lat, lon, settingViewModel.getSettingTemp(),language)
+                homeViewModel.getCurrentData(lat, lon, settingViewModel.getSettingTemp(),language)
             }
             else{
                 getFreshhLocation()
@@ -272,7 +304,45 @@ class HomeFragment : Fragment(),OnNetworkChange  {
 
         } else {
             Log.d("TAG", "onNetworkChange: else")
-            Toast.makeText(appContext, "No internet connection", Toast.LENGTH_SHORT).show()
+            /*progressBar.visibility = View.GONE
+            homeViewModel.todayCurrentWeatherData.observe(viewLifecycleOwner, Observer { current ->
+                binding.hfvModel=current[0]
+            })
+            homeViewModel.todayForecastWeatherData.observe(viewLifecycleOwner, Observer { current ->
+                todayAdapter.submitList(current[0].list.filter {
+                    it.dtTxt?.contains(
+                        SimpleDateFormat(
+                            "yyyy-MM-dd",
+                            Locale.getDefault()
+                        ).format(Date())
+                    ) == true
+                })
+                todaRecyclersView.adapter = todayAdapter
+
+                fiveDaysAdapter.submitList(current[0].list
+                    .filter {
+                        it.dtTxt?.contains(
+                            SimpleDateFormat(
+                                "yyyy-MM-dd",
+                                Locale.getDefault()
+                            ).format(Date())
+                        ) == false
+                    }
+                    .filter {
+                        it.dtTxt?.contains(
+                            SimpleDateFormat(
+                                "09:00:00",
+                                Locale.getDefault()
+                            ).format(Date())
+                        ) == true
+                    }
+                )
+                fiveDaysRecyclersView.adapter = fiveDaysAdapter
+            })
+            homeViewModel.cities.observe(viewLifecycleOwner, Observer { current ->
+            })*/
+
+
         }
 
     }
@@ -296,8 +366,8 @@ class HomeFragment : Fragment(),OnNetworkChange  {
                         var lo = locationResult.lastLocation?.longitude
                         Log.d("TAG", "onLocationResult:${la},--${lo} ")
                         if (la != null && lo != null) {
-                            homeViewModel.getForecastData(la.toString(), lo.toString(), "metric")
-                            homeViewModel.getCurrentData(la.toString(), lo.toString(), "metric")
+                            homeViewModel.getForecastData(la.toString(), lo.toString(), settingViewModel.getSettingTemp(),language)
+                            homeViewModel.getCurrentData(la.toString(), lo.toString(), settingViewModel.getSettingTemp(),language)
                         }
                     }
 //                }
