@@ -7,6 +7,7 @@ import android.content.res.Configuration
 import android.location.LocationManager
 import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import android.util.Log
 import android.view.MenuItem
 import android.view.View
@@ -112,6 +113,12 @@ class MainActivity : AppCompatActivity() {
             Log.d("TAG", "Activity onCreate: start")
 
             if (checkPermission()) {
+                if (!isLocationEnabled()) {
+                    Log.d("TAG", "Activity onCreate:isLocationEnabled if")
+                    val intent= Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
+                    startActivity(intent)
+
+                }
                 Log.d("TAG", "Activity onCreate:checkPermission start")
                 if (aCCESS_FINE_LOCATION) {
                     if(sharedPreferenceViewModel.getLocation()!="null,null"){
@@ -143,19 +150,7 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
 
-                if (isLocationEnabled()) {
-                    Log.d("TAG", "Activity onCreate:isLocationEnabled if")
-                    Toast.makeText(
-                        this,
-                        "Permission granted and location is enabled",
-                        Toast.LENGTH_SHORT
-                    ).show()
 
-
-                } else {
-                    Log.d("TAG", "Activity onCreate:isLocationEnabled else")
-                    Toast.makeText(this, "Please enable location", Toast.LENGTH_SHORT).show()
-                }
                 Log.d("TAG", "Activity onCreate:checkPermission end")
             } else {
                 Log.d("TAG", "Activity onCreate:checkPermission else")

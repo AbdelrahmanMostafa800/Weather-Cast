@@ -81,6 +81,7 @@ class HomeFragment : Fragment(),OnNetworkChange  {
     var isFromFavorits: Boolean? = false
     lateinit var settingViewModel: SettingViewModel
     var language=""
+    var metter=""
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Log.d("toolbar", "home frag onCreate: start")
@@ -108,6 +109,12 @@ class HomeFragment : Fragment(),OnNetworkChange  {
         settingViewModel =
             ViewModelProvider(this, settingViewModelFactory).get(SettingViewModel::class.java)
         language=settingViewModel.getSettingLanguage()
+        metter= when (settingViewModel.getSettingTemp()) {
+            "metric"->"C"
+            "standard"->"K"
+            "imperial"->"F"
+            else -> "C"
+        }
         if (sharedPreferenceViewModel.getLocation()!="null,null"){
             sharedPreferenceLocation= sharedPreferenceViewModel.getLocation().toString()
         }
@@ -127,7 +134,7 @@ class HomeFragment : Fragment(),OnNetworkChange  {
         isFromFavorits= arguments?.getBoolean("isFromFavorits")
         Log.d("fav", "onViewCreated:${isFromFavorits},${latitude},${longitude} ")
 
-
+binding.metter=metter
         val favoritesString =if (isFromFavorits==true) {
             if (language == "ar") {
                 "المفضله"
@@ -155,21 +162,23 @@ class HomeFragment : Fragment(),OnNetworkChange  {
         val isRtl = resources.configuration.layoutDirection == View.LAYOUT_DIRECTION_RTL
 
         todaRecyclersView = view.findViewById(R.id.today_weather_recyclerView)
-
+        val layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+        todaRecyclersView.layoutManager = layoutManager
+        todayAdapter = TodayWeatherDiffUtillAdapter()
+        todaRecyclersView.adapter = todayAdapter
         /*todaRecyclersView.layoutManager =
             LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, isRtl)*/
 
 
-        val layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-        todaRecyclersView.layoutManager = layoutManager
 
-// Check if the locale is RTL (Arabic in your case)
+
+/*// Check if the locale is RTL (Arabic in your case)
         if (ViewCompat.getLayoutDirection(view) == ViewCompat.LAYOUT_DIRECTION_RTL) {
             todaRecyclersView.layoutDirection = View.LAYOUT_DIRECTION_RTL
         } else {
             todaRecyclersView.layoutDirection = View.LAYOUT_DIRECTION_LTR
-        }
-        todayAdapter = TodayWeatherDiffUtillAdapter()
+        }*/
+
 
         fiveDaysRecyclersView = view.findViewById(R.id.next_days_weather_recycler_view)
         fiveDaysRecyclersView.layoutManager = LinearLayoutManager(context)
@@ -213,7 +222,6 @@ class HomeFragment : Fragment(),OnNetworkChange  {
                                     ).format(Date())
                                 ) == true
                             })
-                            todaRecyclersView.adapter = todayAdapter
                             fiveDaysAdapter.submitList(forecastData.data.list
                                 .filter {
                                     it.dtTxt?.contains(

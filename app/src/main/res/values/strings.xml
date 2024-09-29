@@ -33,4 +33,8 @@
     <string name="fehrinhiet">Fehrenheit</string>
     <string name="meter">Meter / Sec</string>
     <string name="mile">Mile / Hour</string>
+    <string name="wind">Wind</string>
+    <string name="pressure">Pressure</string>
+    <string name="humidity">Humidity</string>
+    <string name="cloud">Clouds</string>
 </resources>

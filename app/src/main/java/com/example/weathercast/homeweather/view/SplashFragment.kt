@@ -5,6 +5,8 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
+import androidx.core.app.ActivityCompat
 import androidx.navigation.NavController
 import com.example.weathercast.R
 
@@ -28,6 +30,18 @@ class SplashFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        val enable:TextView=view.findViewById(R.id.enable)
+        enable.setOnClickListener {
+            ActivityCompat.requestPermissions(
+                requireActivity(),
+                arrayOf(
+                    android.Manifest.permission.ACCESS_COARSE_LOCATION,
+                    android.Manifest.permission.ACCESS_FINE_LOCATION
+                ),
+                2005
+            )
+        }
 
     }
 

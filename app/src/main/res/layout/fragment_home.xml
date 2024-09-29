@@ -8,6 +8,9 @@
             name="HFVModel"
             type="com.example.weathercast.data.pojo.CurrentWeatherData" />
         <variable
+            name="metter"
+            type="String" />
+        <variable
             name="currentdate"
             type="String" />
 
@@ -24,9 +27,9 @@
             tools:context=".homeweather.view.HomeFragment">
 
             <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/container"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/container">
+                android:layout_height="wrap_content">
 
                 <ImageView
                     android:id="@+id/imageView2"
@@ -45,11 +48,11 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="29dp"
                     android:layout_marginTop="7dp"
-                    app:countryCode="@{HFVModel.sys.country}"
-                    app:cityName="@{HFVModel.name}"
                     android:textColor="@color/white"
                     android:textSize="20sp"
                     android:textStyle="bold"
+                    app:cityName="@{HFVModel.name}"
+                    app:countryCode="@{HFVModel.sys.country}"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toStartOf="@+id/imageView2"
@@ -75,11 +78,11 @@
                     android:layout_height="103dp"
                     android:layout_marginTop="12dp"
                     android:scaleType="center"
+                    app:error="@{@android:drawable/ic_dialog_alert}"
+                    app:imageIcon="@{HFVModel.weather.get(0).icon}"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textView2"
-                    app:error="@{@android:drawable/ic_dialog_alert}"
-                    app:imageIcon="@{HFVModel.weather.get(0).icon}"/>
+                    app:layout_constraintTop_toBottomOf="@+id/textView2" />
 
                 <TextView
                     android:id="@+id/weather_degree"
@@ -114,7 +117,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="2dp"
                     android:layout_marginTop="2dp"
-                    android:text="C"
+                    android:text="@{metter}"
                     android:textColor="@color/white"
                     android:textSize="34sp"
                     app:layout_constraintStart_toEndOf="@+id/odegree"
@@ -155,7 +158,6 @@
                     android:id="@+id/today_weather_recyclerView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layoutDirection="locale"
                     android:layout_marginTop="20dp"
                     android:background="@color/recycleview_background"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -186,16 +188,171 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/nextFiveDaysTextView" />
 
-                <RelativeLayout
-                    android:layout_width="match_parent"
+                <LinearLayout
+                    android:id="@+id/windL"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="25dp"
+                    android:layout_marginTop="33dp"
+                    android:orientation="vertical"
+                    android:padding="10dp"
+                    app:layout_constraintEnd_toStartOf="@+id/guideline5"
+                    app:layout_constraintHorizontal_bias="0.44"
+                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/next_days_weather_recycler_view">
 
+                    <TextView
+                        android:id="@+id/wind"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:textColor="@color/white"
+                        android:textSize="15sp"
+                        android:text="@string/wind"/>
+
+                    <ImageView
+                        android:id="@+id/imageViewwind"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:layout_gravity="center"
+                        android:layout_marginVertical="5dp"
+                        android:layout_marginBottom="3dp"
+                        android:src="@drawable/wind"/>
+
+                        <TextView
+                            android:id="@+id/weather_wind"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:text="@{HFVModel.wind.speed.toString()}"
+                            android:textColor="@color/white"
+                            android:textSize="15sp" />
+
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="36dp"
+                    android:orientation="vertical"
+                    android:padding="10dp"
+                    app:layout_constraintEnd_toStartOf="@+id/guideline5"
+                    app:layout_constraintHorizontal_bias="0.44"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/windL">
+
+                    <TextView
+                        android:id="@+id/pressure"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:textColor="@color/white"
+                        android:textSize="15sp"
+                        android:text="@string/pressure"/>
+
+                    <ImageView
+                        android:id="@+id/imageViewpressure"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:layout_gravity="center"
+                        android:layout_marginVertical="5dp"
+                        android:layout_marginBottom="3dp"
+                        android:src="@drawable/pressure"/>
+
+                    <TextView
+                        android:id="@+id/weather_pressure"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="@{HFVModel.main.pressure.toString()}"
+                        android:textColor="@color/white"
+                        android:textSize="15sp" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/hummidity"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="32dp"
+                    android:orientation="vertical"
+                    android:padding="10dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="@+id/guideline5"
+                    app:layout_constraintTop_toBottomOf="@+id/next_days_weather_recycler_view">
+
+                    <TextView
+                        android:id="@+id/time"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:textColor="@color/white"
+                        android:textSize="15sp"
+                        android:text="@string/humidity"/>
+
+                    <ImageView
+                        android:id="@+id/imageView3"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:layout_gravity="center"
+                        android:layout_marginVertical="5dp"
+                        android:src="@drawable/humidity"/>
 
 
+                        <TextView
+                            android:id="@+id/weather_condition"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:text="@{HFVModel.main.humidity.toString()}"
+                            android:textColor="@color/white"
+                            android:textSize="15sp" />
 
-                </RelativeLayout>
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="32dp"
+                    android:orientation="vertical"
+                    android:padding="10dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="@+id/guideline5"
+                    app:layout_constraintTop_toBottomOf="@+id/hummidity">
+
+                    <TextView
+                        android:id="@+id/cloud"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:textColor="@color/white"
+                        android:textSize="15sp"
+                        android:text="@string/cloud"/>
+
+                    <ImageView
+                        android:id="@+id/imageView3cloud"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:layout_gravity="center"
+                        android:layout_marginVertical="5dp"
+                        android:src="@drawable/cloud"/>
+
+
+                    <TextView
+                        android:id="@+id/weather_conditioncloud"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="@{HFVModel.clouds.all.toString()}"
+                        android:textColor="@color/white"
+                        android:textSize="15sp" />
+
+                </LinearLayout>
+
+
+                <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/guideline5"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    app:layout_constraintGuide_begin="196dp" />
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.core.widget.NestedScrollView>
         <FrameLayout
